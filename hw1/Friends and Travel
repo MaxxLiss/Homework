@@ -1,0 +1,17 @@
+n, k = map(int, input().split())
+sm = k
+
+arr = []
+
+for i in range(n):
+    a, b = map(int, input().split())
+    arr.append([a, b])
+
+arr = sorted(arr)
+
+for i in range(n):
+    if sm >= arr[i][0]:
+        sm += arr[i][1]
+
+print(min(sm, 10**100))
+

@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<int> places;
+vector<uint64_t> ans;
+
+void f(int curr, bitset<60> num) {
+    auto a = num.to_ullong();
+    cout << a << '\n';
+    for (int i = 0; i < curr; ++i) {
+        num[places[i]] = true;
+        f(i, num);
+        num[places[i]] = false;
+    }
+}
+
+int main() {
+
+    uint64_t n = 0;
+    cin >> n;
+
+    bitset<60> b = n;
+    for (int i = 0; i < 60; ++i) {
+        if (b[i]) {
+            places.emplace_back(i);
+        }
+    }
+
+    f((int) places.size(), 0);
+
+    return 0;
+}

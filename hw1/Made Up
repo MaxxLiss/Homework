@@ -1,0 +1,48 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int n = 0;
+    long long ans = 0;
+    cin >> n;
+
+    int b[n], c[n];
+    vector<int> a(n), used(n, 0);
+
+    for (auto &it : a) {
+        cin >> it;
+    }
+    for (auto &it : b) {
+        cin >> it;
+    }
+    for (auto &it : c) {
+        cin >> it;
+    }
+
+    sort(a.begin(), a.end());
+
+    for (int j = 0; j < n; ++j) {
+        int ind = c[j] - 1;
+        if (used[ind] > 0) {
+            ans += used[ind];
+        } else if (used[ind] == 0) {
+            int key = b[ind];
+            auto l = lower_bound(a.begin(), a.end(), key);
+            auto r = upper_bound(a.begin(), a.end(), key);
+            if (l == a.end() or *l != key) {
+                used[ind] = -1;
+            } else {
+                used[ind] = (int)(r - l);
+                ans += used[ind];
+            }
+        }
+    }
+
+    cout << ans;
+
+    return 0;
+}

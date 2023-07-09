@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<int> coins(10);
+void fill_coins() {
+    int a = 1;
+    for (int i = 1; i <= 10; ++i) {
+        a *= i;
+        coins[i - 1] = a;
+    }
+}
+
+int p = 0;
+
+long long f(vector<int> used, int cnt, int sm) {
+    if (sm > p) {
+        return 0;
+    }
+    if (sm == p) {
+        return cnt;
+    }
+    for (int i = 9; i >= 0; --i) {
+        if (used[i] == 100) {
+            continue;
+        }
+        used[i]++;
+        auto ans = f(used, cnt + 1, sm + coins[i]);
+        used[i]--;
+        if (ans != 0) {
+            return ans;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    fill_coins();
+
+    cin >> p;
+    cout << f(vector<int> (10), 0, 0);
+
+    return 0;
+}

@@ -1,0 +1,25 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int n = 0;
+    long long ans = 0;
+    vector<int> rem(200, 0);
+    cin >> n;
+
+    for (int i = 0; i < n; ++i) {
+        int a = 0;
+        cin >> a;
+        int reminder = a % 200;
+        ans += rem[reminder];
+        rem[reminder]++;
+    }
+
+    cout << ans;
+
+    return 0;
+}

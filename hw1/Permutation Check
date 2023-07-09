@@ -1,0 +1,25 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int n = 0;
+    bool ans = true;
+    cin >> n;
+    vector<int> v(n + 1);
+    for (int i = 0; i < n && ans; ++i) {
+        int a;
+        cin >> a;
+        v[a]++;
+        if (v[a] > 1) {
+            ans = false;
+        }
+    }
+
+    cout << (ans ? "Yes" : "No");
+
+    return 0;
+}
