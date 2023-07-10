@@ -1,0 +1,41 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int n = 0, k = 0, ans = 0;
+
+void f(int len, int count, vector<int> used) {
+    if (len == n) {
+        if (count == 0) {
+            ans += 1;
+        }
+        return;
+    }
+    for (int i = 1; i <= n; ++i) {
+        if (!used[i]) {
+            used[i] = 1;
+            if (i == len + 1) {
+                if (count > 0) {
+                    f(len + 1, count - 1, used);
+                }
+            } else {
+                f(len + 1, count, used);
+            }
+            used[i] = 0;
+        }
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> n >> k;
+    vector<int> used(n + 1, 0);
+
+    f(0, k, used);
+
+    cout << ans;
+
+    return 0;
+}
