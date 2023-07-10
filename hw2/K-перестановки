@@ -1,0 +1,34 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int n = 0, k = 0, ans = 0;
+
+void f(int len, int prev, vector<int> used) {
+    if (len == n) {
+        ans += 1;
+    }
+    for (int i = max(prev - k, 1); i <= min(n, prev + k); ++i) {
+        if (!used[i]) {
+            used[i] = 1;
+            f(len + 1, i, used);
+            used[i] = 0;
+        }
+    }
+}
+
+int main() {
+    cin >> n >> k;
+
+    vector<int> used(n + 1, 0);
+
+    for (int i = 1; i <= n; ++i) {
+        used[i] = 1;
+        f(1, i, used);
+        used[i] = 0;
+    }
+
+    cout << ans;
+
+    return 0;
+}
