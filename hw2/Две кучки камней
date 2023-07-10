@@ -1,0 +1,42 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int inf = 1e9;
+
+int n = 0, ans = inf, sm = 0;
+vector<int> stones;
+vector<bool> used;
+
+void f(int loc_sm, int prev) {
+    if (sm - loc_sm <= loc_sm) {
+        ans = min(ans, abs(sm - 2 * loc_sm));
+        return;
+    }
+    for (int i = prev; i < n; ++i) {
+        if (!used[i]) {
+            used[i] = true;
+            f(loc_sm + stones[i], i);
+            used[i] = false;
+        }
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> n;
+    stones = vector<int> (n);
+    used = vector<bool>(n, false);
+    for (int i = 0; i < n; ++i) {
+        cin >> stones[i];
+        sm += stones[i];
+    }
+
+    f(0, 0);
+
+    cout << ans;
+
+    return 0;
+}
