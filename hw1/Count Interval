@@ -1,59 +1,25 @@
-#include <bits/stdc++.h>
+#include "bits/stdc++.h"
 
 using namespace std;
 
 int main() {
-    cin.tie(nullptr); cout.tie(nullptr);
-    ios_base::sync_with_stdio(false);
-
     int n = 0;
-    long long k = 0, ans = 0;
+    long long k = 0, ans = 0, sm = 0;
     cin >> n >> k;
 
-    int prev[n + 1];
-    prev[0] = 0;
-    for (int i = 1; i <= n; ++i) {
+    map<long long, int> m;
+    m[0] = 1;
+
+    for (int i = 0; i < n; ++i) {
         int a = 0;
         cin >> a;
-        prev[i] = prev[i - 1] + a;
+        sm += a;
+
+        ans += m[sm - k];
+        m[sm]++;
     }
 
-    int l = 1, r = 2;
-    long long sm = prev[r] - prev[l - 1];
-    if (sm == k) {
-        ans += 1;
-    }
-    if (k >= 0) {
-        while (l <= n) {
-            sm = prev[r] - prev[l - 1];
-            if (sm < 0) {
-                l = r + 1;
-            }
-            if (sm == k) {
-                ans += 1;
-            }
-            if (r == n) {
-                l++;
-                r = l - 1;
-            }
-            ++r;
-        }
-    } else {
-        while (l <= n) {
-            sm = prev[r] - prev[l - 1];
-            if (sm <= 0) {
-                l = r + 1;
-            }
-            if (sm == k) {
-                ans += 1;
-            }
-            if (r == n) {
-                l++;
-                r = l - 1;
-            }
-            ++r;
-        }
-    }
     cout << ans;
+
     return 0;
 }
