@@ -1,0 +1,56 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int n = 0;
+double ans = 1e9, c = 0;
+
+vector<int> v;
+
+void f(int curr, double curr_c) {
+    if (abs(c - curr_c) < ans) {
+        ans = abs(c - curr_c);
+    }
+    for (int i = curr; i < n; ++i) {
+        double posl = v[i] + curr_c;
+        double parral = (v[i] * curr_c) / posl;
+        f(i + 1, abs(c - posl) < abs(c - parral) ? posl : parral);
+    }
+}
+
+//void f(int curr, long long chis, long long znam) {
+//    double curr_c = (double) chis / (double) znam;
+//    if (abs(c - curr_c) < ans) {
+//        ans = abs(c - curr_c);
+//    }
+//    for (int i = curr; i < n; ++i) {
+//        long long posl_chis = v[i] * znam + chis;
+//        long long posl_znam = znam;
+//        long long parral_chis = v[i] * chis;
+//        long long parral_znam = v[i] + znam;
+//        if (abs(c - (double) posl_chis / (double) posl_znam) < abs(c - (double) parral_chis / (double) parral_znam)) {
+//            f(i + 1, posl_chis, posl_znam);
+//        } else {
+//            f(i + 1, parral_chis, parral_znam);
+//        }
+//    }
+//}
+
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> n >> c;
+    v = vector<int> (n);
+
+    for (int i = 0; i < n; ++i) {
+        cin >> v[i];
+    }
+
+    f(0, 0);
+
+    cout << (ans <= 0.01 ? "YES" : "NO");
+
+    return 0;
+}
