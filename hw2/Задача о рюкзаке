@@ -1,0 +1,64 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int n = 0, w = 0;
+long long ans = 0;
+
+list<int> ans_ind, ind;
+vector<pair<int, int>> v;
+
+void f(long long sm, long long cost) {
+    if (sm > w) {
+        return;
+    }
+    if (sm <= w and cost == ans and !ind.empty()) {
+        if (ind.size() < ans_ind.size()) {
+            ans_ind = ind;
+            ans = cost;
+        } else if (ind.size() == ans_ind.size()) {
+            auto ans_it = ans_ind.begin();
+            auto ind_it = ind.begin();
+            while (*ans_it == *ind_it) {
+                ans_it++;
+                ind_it++;
+            }
+            if (*ind_it < *ans_it) {
+                ans_ind = ind;
+                ans = cost;
+            }
+        }
+    }
+    if (sm <= w and cost > ans) {
+        ans_ind = ind;
+        ans = cost;
+    }
+
+    for (int i = (ind.empty() ? 0 : ind.back() + 1); i < n; ++i) {
+        ind.push_back(i);
+        f(sm + v[i].first, cost + v[i].second);
+        ind.pop_back();
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> n >> w;
+
+    v = vector<pair<int, int>> (n);
+
+    for (auto &it: v) {
+        cin >> it.first >> it.second;
+    }
+
+    f(0, 0);
+
+    cout << ans_ind.size() << " " << ans << '\n';
+    for (auto it : ans_ind) {
+        cout << it + 1 << " ";
+    }
+
+    return 0;
+}
