@@ -1,0 +1,100 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int n = 0, k = 0;
+long long ans = 0;
+
+vector<vector<bool>> update(pair<int, int> pos, vector<vector<bool>> &used) {
+    auto new_used = used;
+    for (int i = 0; i < n; ++i) {
+        new_used[i][pos.second] = true;
+        new_used[pos.first][i] = true;
+        if (pos.first + i < n && pos.second + i < n) {
+            new_used[pos.first + i][pos.second + i] = true;
+        }
+        if (pos.first + i < n && pos.second - i >= 0) {
+            new_used[pos.first + i][pos.second - i] = true;
+        }
+        if (pos.first - i >= 0 && pos.second - i >= 0) {
+            new_used[pos.first - i][pos.second - i] = true;
+        }
+        if (pos.first - i >= 0 && pos.second + i < n) {
+            new_used[pos.first - i][pos.second + i] = true;
+        }
+    }
+    if (pos.first - 2 >= 0) {
+        if (pos.second + 1 < n) {
+            new_used[pos.first - 2][pos.second + 1] = true;
+        }
+        if (pos.second - 1 >= 0) {
+            new_used[pos.first - 2][pos.second - 1] = true;
+        }
+    }
+    if (pos.first - 1 >= 0) {
+        if (pos.second + 2 < n) {
+            new_used[pos.first - 1][pos.second + 2] = true;
+        }
+        if (pos.second - 2 >= 0) {
+            new_used[pos.first - 1][pos.second - 2] = true;
+        }
+    }
+    if (pos.first + 2 < n) {
+        if (pos.second + 1 < n) {
+            new_used[pos.first + 2][pos.second + 1] = true;
+        }
+        if (pos.second - 1 >= 0) {
+            new_used[pos.first + 2][pos.second - 1] = true;
+        }
+    }
+    if (pos.first + 1 < n) {
+        if (pos.second + 2 < n) {
+            new_used[pos.first + 1][pos.second + 2] = true;
+        }
+        if (pos.second - 2 >= 0) {
+            new_used[pos.first + 1][pos.second - 2] = true;
+        }
+    }
+    return new_used;
+}
+
+void f(int len, int curr, vector<vector<bool>> used) {
+    if (len == k) {
+        ans++;
+        return;
+    }
+    if (curr > n || (curr + k - len > n)) {
+        return;
+    }
+    for (int i = curr; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (used[i][j]) {
+                continue;
+            }
+            f(len + 1, i + 1, update({i, j}, used));
+        }
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> n >> k;
+    clock_t start = clock();
+
+    vector<vector<bool>> used(n, vector<bool> (n, false));
+
+    if (k <= n) {
+        f(0, 0, used);
+    }
+
+    vector<vector<int>> v(n, vector<int> (n, 0));
+
+    cout << ans << endl;
+
+    clock_t stop = clock();
+    cout << (double) (stop - start) / CLOCKS_PER_SEC;
+
+    return 0;
+}
