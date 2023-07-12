@@ -1,0 +1,56 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    long long ans = 1;
+    int n = 0, k = 0, m = 0;
+    cin >> n >> k >> m;
+
+    vector<vector<int>> g(n);
+    vector<bool> used(n, false);
+    for (int i = 0; i < m; ++i) {
+        int from = 0, to = 0;
+        cin >> from >> to;
+        from--; to--;
+        g[from].push_back(to);
+        g[to].push_back(from);
+    }
+
+    for (int i = 0; i < n; ++i) {
+        g[i].push_back(i);
+    }
+
+    queue<int> q;
+    for (int i = 0; i < n; ++i) {
+        q.push(i);
+        while (!q.empty()) {
+            int from = q.front();
+            q.pop();
+
+            if (used[from]) {
+                continue;
+            }
+
+            int count_visited = 0;
+
+            for (auto to : g[from]) {
+                if (used[to]) {
+                    count_visited++;
+                } else {
+                    q.push(to);
+                }
+            }
+
+            used[from] = true;
+            ans *= max(0, k - count_visited);
+        }
+    }
+
+    cout << ans << "\n";
+
+    return 0;
+}
