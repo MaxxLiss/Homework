@@ -6,19 +6,14 @@ const int inf = 1e9;
 
 int n = 0, ans = inf, sm = 0;
 vector<int> stones;
-vector<bool> used;
 
-void f(int loc_sm, int prev) {
+void f(int loc_sm, int curr) {
     if (sm - loc_sm <= loc_sm) {
         ans = min(ans, abs(sm - 2 * loc_sm));
         return;
     }
-    for (int i = prev; i < n; ++i) {
-        if (!used[i]) {
-            used[i] = true;
-            f(loc_sm + stones[i], i);
-            used[i] = false;
-        }
+    for (int i = curr; i < n; ++i) {
+        f(loc_sm + stones[i], i + 1);
     }
 }
 
@@ -28,7 +23,6 @@ int main() {
 
     cin >> n;
     stones = vector<int> (n);
-    used = vector<bool>(n, false);
     for (int i = 0; i < n; ++i) {
         cin >> stones[i];
         sm += stones[i];
