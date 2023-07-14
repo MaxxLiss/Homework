@@ -22,6 +22,10 @@ int main() {
             int l = 0, r = 0;
             cin >> visit[i] >> l >> r;
 
+            if (!ans) {
+                continue;
+            }
+
             dp[i].first = dp[i - 1].first - (visit[i] - visit[i - 1]);
             dp[i].second = dp[i - 1].second + visit[i] - visit[i - 1];
 
@@ -30,7 +34,6 @@ int main() {
                 dp[i].second = min(dp[i].second, r);
             } else {
                 ans = false;
-                break;
             }
         }
         cout << (ans ? "YES\n" : "NO\n");
