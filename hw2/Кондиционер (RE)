@@ -1,0 +1,40 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int q = 0;
+    cin >> q;
+
+    while (q--) {
+        int n = 0, m = 0;
+        cin >> n >> m;
+
+        vector<pair<int, int>> dp(n + 1);
+        vector<int> visit(n + 1, 0);
+        dp[0] = {m, m};
+
+        bool ans = true;
+        for (int i = 1; i <= n; ++i) {
+            int l = 0, r = 0;
+            cin >> visit[i] >> l >> r;
+
+            dp[i].first = dp[i - 1].first - (visit[i] - visit[i - 1]);
+            dp[i].second = dp[i - 1].second + visit[i] - visit[i - 1];
+
+            if (max(dp[i].first, l) <= min(dp[i].second, r)) {
+                dp[i].first = max(dp[i].first, l);
+                dp[i].second = min(dp[i].second, r);
+            } else {
+                ans = false;
+                break;
+            }
+        }
+        cout << (ans ? "YES\n" : "NO\n");
+    }
+
+    return 0;
+}
