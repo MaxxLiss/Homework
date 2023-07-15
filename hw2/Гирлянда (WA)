@@ -2,16 +2,81 @@
 
 using namespace std;
 
+int n = 0, k = 0;
+
+vector<int> c;
+vector<vector<int>> g;
+
+deque<int> q;
+
+int col = 0, curr_col = 0;
+vector<int> comp;
+vector<int> cnt = {0};
+
+vector<int> ans;
+
+void dfs(int v) {
+    for (auto to : g[v]) {
+        if (!comp[to]) {
+            comp[to] = col;
+            cnt[col]++;
+            dfs(to);
+        }
+    }
+}
+
+void f(int v) {
+    if (c[v] || ans[curr_col] == -1) {
+        return;
+    }
+    vector<int> used_col(k + 1, 0);
+    for (auto to : g[v]) {
+        if (c[to]) {
+            used_col[c[to]] = 1;
+        } else {
+            q.push_back(to);
+        }
+    }
+
+    int next = (q.empty() ? -1 : q.front());
+    bool flag = false;
+    for (int i = 1; i <= k; ++i) {
+        if (used_col[i]) {
+            continue;
+        }
+
+        flag = true;
+
+        if (!(cnt[curr_col] - 1)) {
+            ans[curr_col]++;
+        } else {
+            c[v] = i;
+            cnt[curr_col]--;
+            q.pop_front();
+
+            f(next);
+
+            q.push_front(next);
+            cnt[curr_col]++;
+            c[v] = 0;
+        }
+    }
+    if (!flag) {
+        ans[curr_col] = -1;
+    }
+}
+
 int main() {
     cin.tie(nullptr); cout.tie(nullptr);
     ios_base::sync_with_stdio(false);
 
-    long long ans = 1;
-    int n = 0, k = 0, m = 0;
+    int m = 0;
     cin >> n >> k >> m;
 
-    vector<vector<int>> g(n);
-    vector<bool> used(n, false);
+    g = vector<vector<int>> (n);
+    c = vector<int> (n, 0);
+    comp = vector<int> (n, 0);
+
     for (int i = 0; i < m; ++i) {
         int from = 0, to = 0;
         cin >> from >> to;
@@ -21,36 +86,35 @@ int main() {
     }
 
     for (int i = 0; i < n; ++i) {
-        g[i].push_back(i);
-    }
-
-    queue<int> q;
-    for (int i = 0; i < n; ++i) {
-        q.push(i);
-        while (!q.empty()) {
-            int from = q.front();
-            q.pop();
-
-            if (used[from]) {
-                continue;
-            }
-
-            int count_visited = 0;
-
-            for (auto to : g[from]) {
-                if (used[to]) {
-                    count_visited++;
-                } else {
-                    q.push(to);
-                }
-            }
-
-            used[from] = true;
-            ans *= max(0, k - count_visited);
+        if (!comp[i]) {
+            col++;
+            cnt.push_back(1);
+            comp[i] = col;
+            dfs(i);
         }
     }
 
-    cout << ans << "\n";
+    ans = vector<int> (col + 1, 0);
+    vector<int> used_col(col + 1, 0);
+
+    for (int i = 0; i < n; ++i) {
+        if (!used_col[comp[i]]) {
+            used_col[comp[i]] = 1;
+            curr_col = comp[i];
+            f(i);
+        }
+    }
+
+    int fin_ans = 1;
+
+    for (int i = 1; i < ans.size(); ++i) {
+        fin_ans *= ans[i];
+        if (ans[i] == -1) {
+            fin_ans = 0;
+        }
+    }
+
+    cout << fin_ans;
 
     return 0;
 }
