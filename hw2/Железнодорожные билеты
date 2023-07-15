@@ -17,6 +17,9 @@ int main() {
     int beg = 0, end = 0;
     cin >> beg >> end;
     beg--; end--;
+    if (beg > end) {
+        swap(beg, end);
+    }
 
     vector<int> pos(n, 0);
     for (int i = 1; i < n; ++i) {
