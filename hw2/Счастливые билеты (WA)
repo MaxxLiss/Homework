@@ -43,22 +43,19 @@ int main() {
     cin >> n >> sm;
     sm /= 2;
 
-    // dp[i] - количество элементов
+    // dp[i][j] - количество способов составить из i цифр сумму j
+    // dp[i][j] = sum(dp[i - 1][j - 9 ... j])
 
-    vector<vector<uint64_t>> dp(n + 1, vector<uint64_t> (sm + 1, 0));
+    vector<vector<uint64_t>> dp(n + 1, vector<uint64_t>(sm + 1, 0));
     for (int i = 0; i <= min(9, sm); ++i) {
         dp[1][i] = 1;
     }
-    for (int i = 1; i <=
-                    n; ++i) {
-        dp[i][0] = 1;
-    }
     for (int i = 2; i <= n; ++i) {
-        uint64_t loc_sm = 1;
-        for (int j = 1; j <= min(9 * i, sm); ++j) {
+        uint64_t loc_sm = 0;
+        for (int j = 0; j <= min(9 * i, sm); ++j) {
             loc_sm += dp[i - 1][j];
             if (j > 9) {
-                loc_sm -= dp[i - 1][j - 9];
+                loc_sm -= dp[i - 1][j - 10];
             }
             dp[i][j] = loc_sm;
         }
