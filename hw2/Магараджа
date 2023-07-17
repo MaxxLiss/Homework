@@ -1,0 +1,71 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int n = 10, k = 0;
+long long ans = 0;
+vector<vector<int>> used;
+
+int di[] = {1, 1, 2, 2, -1, -1, -2, -2};
+int dj[] = {-2, 2, -1, 1, -2, 2, -1, 1};
+
+void update(pair<int, int> pos, int del) {
+    for (int i = 0; i < n; ++i) {
+        used[i][pos.second] += del;
+        used[pos.first][i] += del;
+        if (pos.first + i < n && pos.second + i < n) {
+            used[pos.first + i][pos.second + i] += del;
+        }
+        if (pos.first + i < n && pos.second - i >= 0) {
+            used[pos.first + i][pos.second - i] += del;
+        }
+        if (pos.first - i >= 0 && pos.second - i >= 0) {
+            used[pos.first - i][pos.second - i] += del;
+        }
+        if (pos.first - i >= 0 && pos.second + i < n) {
+            used[pos.first - i][pos.second + i] += del;
+        }
+    }
+    used[pos.first][pos.second] -= 5 * del;
+
+    for (int i = 0; i < 8; ++i) {
+        int ni = pos.first + di[i], nj = pos.second + dj[i];
+        if (0 <= ni && ni < n && 0 <= nj && nj < n) {
+            used[ni][nj] += del;
+        }
+    }
+}
+
+void f(int len, int curr) {
+    if (len == k) {
+        ans++;
+        return;
+    }
+    if (curr >= n || (curr + k - len > n)) {
+        return;
+    }
+    for (int i = curr; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (used[i][j]) {
+                continue;
+            }
+            update({i, j}, 1);
+            f(len + 1, i + 1);
+            update({i, j}, -1);
+        }
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> n >> k;
+    used = vector<vector<int>> (n, vector<int> (n, 0));
+
+    f(0, 0);
+
+    cout << ans;
+
+    return 0;
+}
