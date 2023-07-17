@@ -1,0 +1,84 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+vector<int> simple = {2};
+
+void find_simple(int n) {
+    for (int i = 3; i <= n; i += 2) {
+        bool flag = true;
+        for (auto j : simple) {
+            if (j * j > i) {
+                break;
+            }
+            if (!(i % j)) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            simple.push_back(i);
+        }
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    unordered_map<int, pair<int, int>> m;
+    // m[простое число]={минимум таких делителей в каком-то числе, второй минимум}
+
+    int n = 0;
+    cin >> n;
+
+    find_simple(200000);
+
+    auto k = simple.size();
+    vector<int> count(k, 0);
+
+    for (int i = 0; i < n; ++i) {
+        int a = 0;
+        cin >> a;
+
+        for (int j = 0; j < k && a != 1; ++j) {
+            if (count[j] + 1 < i || a % simple[j]) {
+                continue;
+            }
+            count[j]++;
+            int count_deg = 0;
+            while (!(a % simple[j])) {
+                count_deg++;
+                a /= simple[j];
+            }
+            auto& up_data = m[simple[j]];
+            if (count_deg < up_data.second || !up_data.second) {
+                if (count_deg < up_data.first || !up_data.first) {
+                    up_data.second = up_data.first;
+                    up_data.first = count_deg;
+                } else {
+                    up_data.second = count_deg;
+                }
+            }
+        }
+    }
+
+    uint64_t ans = 1;
+
+    for (int i = 0; i < k; ++i) {
+        if (count[i] == n - 1) {
+            ans *= pow(simple[i], m[simple[i]].first);
+        } else if (count[i] == n) {
+            if (!m[simple[i]].second) {
+                ans *= pow(simple[i], m[simple[i]].first);
+            } else {
+                ans *= pow(simple[i], m[simple[i]].second);
+            }
+        }
+
+    }
+
+    cout << ans;
+
+    return 0;
+}
