@@ -2,44 +2,60 @@
 
 using namespace std;
 
-int n = 0;
-double ans = 1e9, c = 0;
-
-vector<bool> used;
-vector<int> v;
-
-void f(double curr_c) {
-    if (abs(c - curr_c) < ans) {
-        ans = abs(c - curr_c);
+set<double> f(vector<int> &v) {
+    set<double> c;
+    if (v.size() == 1) {
+        c.insert(v.front());
     }
-    for (int i = 0; i < n; ++i) {
-        if (used[i]) {
-            continue;
+    for (int i = 1; i < (1 << v.size()) - 1; ++i) {
+        vector<int> a, b;
+        for (int j = 0; j < v.size(); ++j) {
+            if (i & (1 << j)) {
+                a.push_back(v[j]);
+            } else {
+                b.push_back(v[j]);
+            }
         }
-        used[i] = true;
-        double posl = v[i] + curr_c;
-        double parral = (v[i] * curr_c) / posl;
-        f(posl);
-        f(parral);
-        used[i] = false;
+        auto ac = f(a);
+        auto bc = f(b);
+        for (auto bi : bc) {
+            for (auto ai : ac) {
+                c.insert(ai + bi);
+                c.insert((ai * bi) / (ai + bi));
+            }
+            c.insert(bi);
+        }
+        for (auto it : ac) {
+            c.insert(it);
+        }
     }
+    return c;
 }
 
 int main() {
     cin.tie(nullptr); cout.tie(nullptr);
     ios_base::sync_with_stdio(false);
 
+    int n = 0;
+    double c = 0;
     cin >> n >> c;
-    v = vector<int> (n);
-    used = vector<bool> (n, false);
 
-    for (int i = 0; i < n; ++i) {
-        cin >> v[i];
+    vector<int> v(n);
+    for (auto &it : v) {
+        cin >> it;
     }
 
-    f(0);
+    auto ci = f(v);
 
-    cout << (ans <= 0.01 ? "YES" : "NO");
+    bool ans = false;
+    for (auto it: ci) {
+        if (abs(c - it) <= 0.01) {
+            ans = true;
+            break;
+        }
+    }
+
+    cout << (ans ? "YES" : "NO");
 
     return 0;
 }
