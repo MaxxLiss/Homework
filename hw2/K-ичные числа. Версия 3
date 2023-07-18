@@ -1,0 +1,87 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+long long n = 0, k = 0, mod = 0;
+
+long long binmul(long long a, long long b) {
+    long long res = 0;
+    while (b) {
+        if (b & 1) {
+            res += a;
+            res %= mod;
+        }
+        a *= 2;
+        a %= mod;
+        b >>= 1;
+    }
+    return res;
+}
+
+struct matrix {
+    vector<vector<long long>> m;
+
+    explicit matrix(const vector<vector<long long int>> &m) : m(m) {}
+
+    matrix& operator += (const matrix &a) {
+        for (int i = 0; i < m.size(); ++i) {
+            for (int j = 0; j < m[0].size(); ++j) {
+                m[i][j] += a.m[i][j];
+                m[i][j] %= mod;
+            }
+        }
+        return *this;
+    }
+
+    matrix& operator *= (const matrix &a) {
+        vector<vector<long long>> res(m.size(), vector<long long> (a.m[0].size(), 0));
+        for (int i = 0; i < res.size(); ++i) {
+            for (int j = 0; j < res[0].size(); ++j) {
+                for (int l = 0; l < res[0].size(); ++l) {
+                    res[i][j] += binmul(m[i][l], a.m[l][j]);
+                    res[i][j] %= mod;
+                }
+            }
+        }
+        this->m = res;
+        return *this;
+    }
+};
+
+matrix binpow(matrix &a, long long p) {
+    matrix res ({{1, 0}, {0, 1}});
+    auto a1 = a;
+    while (p) {
+        if (p & 1) {
+            res *= a1;
+        }
+        a1 *= a1;
+        p >>= 1;
+    }
+    return res;
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> n >> k >> mod;
+    n--;
+
+    if (n == 1) {
+        cout << binmul(k - 1, k);
+        return 0;
+    }
+
+    matrix dp ({{k, binmul(k - 1, k + 1)}});
+    matrix a({{0, k - 1}, {1, k - 1}});
+
+    a = binpow(a, n - 1);
+    dp *= a;
+
+    auto ans = binmul(dp.m[0][0], k - 1);
+
+    cout << ans;
+
+    return 0;
+}
