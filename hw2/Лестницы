@@ -9,6 +9,9 @@ int main() {
     int n = 0;
     cin >> n;
 
+    //dp[n][k] - сумма, k - макс высота
+    //dp[n][k] = dp[n][k - 1] + dp[n - k][k - 1]
+
     // i - высота посл. столбца, j - количество кубиков
     vector<vector<uint64_t>> dp(n + 1, vector<uint64_t> (n + 1, 0));
     for (int i = 1; i <= n; ++i) {
