@@ -1,0 +1,47 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int n = 0, m = 0;
+    string s, t;
+
+    cin >> n >> m;
+    cin >> s >> t;
+
+    vector<int> pref(m), suff(m);
+
+    int pos_t = 0, pos_s = 0;
+    while (pos_t != m) {
+        if (s[pos_s] == t[pos_t]) {
+            pref[pos_t] = pos_s;
+            pos_t++;
+        }
+        pos_s++;
+    }
+
+    pos_s = n - 1;
+    pos_t = m - 1;
+    while (pos_t != -1) {
+        if (s[pos_s] == t[pos_t]) {
+            suff[pos_t] = pos_s;
+            pos_t--;
+        }
+        pos_s--;
+    }
+
+    int ans = 0;
+    for (int i = 0; i < m - 1; ++i) {
+        int tmp = abs(pref[i] - suff[i + 1]);
+        if (tmp > ans) {
+            ans = tmp;
+        }
+    }
+
+    cout << ans;
+
+    return 0;
+}
