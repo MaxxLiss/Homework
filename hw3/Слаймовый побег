@@ -1,0 +1,41 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int t = 0;
+    cin >> t;
+
+    while(t--) {
+        int n = 0, k = 0;
+        cin >> n >> k;
+        k--;
+        vector<int> v(n);
+        for (auto &it : v) {
+            cin >> it;
+        }
+
+        int l = k - 1, r = k + 1;
+        long long sm_l = v[k], sm_r = v[k];
+        long long add_l = 0, add_r = 0;
+
+        while (l >= 0 && sm_l + add_r >= 0) {
+            while (r < n && sm_r + add_l >= 0) {
+                sm_r += v[r];
+                add_r = max(add_r, sm_r - v[k]);
+                ++r;
+            }
+            sm_l += v[l];
+            add_l = max(add_l, sm_l - v[k]);
+            --l;
+        }
+
+        cout << (sm_l + add_r >= 0 || sm_r + add_l >= 0 ? "YES" : "NO") << '\n';
+
+    }
+
+    return 0;
+}
