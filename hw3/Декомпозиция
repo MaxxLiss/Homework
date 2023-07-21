@@ -1,0 +1,40 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    long long ans = 0;
+    int n = 0;
+    cin >> n;
+
+    vector<int> v(n + 1, 0);
+    vector<int> dp(n + 1, 0);
+    vector<list<int>> sequences;
+    for (int i = 1; i <= n; ++i) {
+        cin >> v[i];
+
+        int place = (int) sequences.size();
+        for (int j = 0; j < sequences.size(); ++j) {
+            if ((v[i] & v[sequences[j].back()]) != 0) {
+                place = j;
+                break;
+            }
+        }
+        if (place == sequences.size()) {
+            sequences.emplace_back();
+            dp[i] = dp[i - 1] + i;
+        } else {
+            dp[i] = dp[i - 1] + i - sequences[place].back();
+        }
+
+        sequences[place].push_back(i);
+        ans += dp[i];
+    }
+
+    cout << ans;
+
+    return 0;
+}
