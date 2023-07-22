@@ -1,0 +1,75 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+// Я очень удивлюсь, если Вы разберётесь в этом коде ахахах
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int ans = 0; // номер последней решённой задачи в ответе
+    int n = 0;
+    cin >> n;
+    vector<long long> cost(n, 0);
+    vector<int> p(n);
+    set<pair<long long, int>> work; // {время, индекс в массиве (отсортированном)}
+    vector<pair<pair<long long, long long>, pair<long long, int>>> data(n); //время, время на решение, стоимость, номер
+
+    for (int i = 0; i < n; ++i) {
+        cin >> data[i].first.first >> data[i].first.second >> data[i].second.first;
+        data[i].second.second = i;
+    }
+    sort(data.begin(), data.end());
+
+    for (int i = 0; i < n; ++i) {
+        auto ind = data[i].second.second;
+        auto c = data[i].second.first;
+        auto t = data[i].first.second;
+        auto s = data[i].first.first;
+
+        auto most_expansive = work.begin();
+        auto pos = work.begin();
+
+        while (pos != work.end() && pos->first <= s) {
+            if (cost[data[pos->second].second.second] < cost[data[most_expansive->second].second.second]) {
+                pos = next(pos);
+                work.erase(prev(pos));
+            } else if (cost[data[pos->second].second.second] > cost[data[most_expansive->second].second.second]) {
+                work.erase(most_expansive);
+                most_expansive = pos;
+                pos = next(pos);
+            } else {
+                pos = next(pos);
+            }
+        }
+
+        if (!work.empty() && most_expansive->first <= s) {
+            cost[ind] = cost[data[most_expansive->second].second.second] + c;
+            p[ind] = data[most_expansive->second].second.second;
+        } else {
+            cost[ind] = c;
+            p[ind] = -1;
+        }
+        work.insert({s + t, i});
+
+        if (cost[ans] < cost[ind]) {
+            ans = ind;
+        }
+    }
+
+    cout << cost[ans] << endl;
+
+    list<int> res;
+    int pos = ans;
+    while (pos != -1) {
+        res.push_front(pos + 1);
+        pos = p[pos];
+    }
+
+    cout << res.size() << endl;
+    for (auto &it : res) {
+        cout << it << " ";
+    }
+
+    return 0;
+}
