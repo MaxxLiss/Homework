@@ -1,0 +1,69 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int t = 0;
+    cin >> t;
+
+    vector<int> simples = {2};
+    for (int i = 3; i * i <= 1e9; i += 2) {
+        bool flag = true;
+        for (auto it : simples) {
+            if (it * it > i) {
+                break;
+            }
+            if (i % it == 0) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            simples.push_back(i);
+        }
+    }
+
+    int k = (int) simples.size();
+
+    while (t--) {
+        map<int, int> cnt;
+
+        int n = 0;
+        cin >> n;
+        bool ans = false;
+
+        for (int i = 1; i <= n; ++i) {
+            int a = 0;
+            cin >> a;
+
+            int del = 0;
+            while (a != 1 && del < k) {
+                if (a % simples[del] == 0) {
+                    if (cnt[del]) {
+                        if (cnt[del] != i) {
+                            ans = true;
+                        }
+                    } else {
+                        cnt[del] = i;
+                    }
+                    a /= simples[del];
+                } else {
+                    del++;
+                }
+            }
+            if (a != 1) {
+                if (cnt[a]) {
+                    ans = true;
+                } else {
+                    cnt[a] = i;
+                }
+            }
+        }
+
+        cout << (ans ? "YES\n" : "NO\n");
+    }
+    return 0;
+}
