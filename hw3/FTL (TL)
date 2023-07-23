@@ -1,0 +1,72 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+static const long long inf = 1e18;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int p1 = 0, p2 = 0;
+    long long t1 = 0, t2 = 0;
+    cin >> p1 >> t1 >> p2 >> t2;
+
+    int h = 0, s = 0;
+    cin >> h >> s;
+
+    // {{прошедшее время, оставшаяся прочность}, {оставшееся время перезарядки первого, оставшееся время перезарядки второго}}
+    set<pair<pair<long long, int>, pair<long long, long long>>> work;
+
+    if (t1 < t2) {
+        work.insert({{t1, h}, {0, t2 - t1}});
+        work.insert({{t2, h}, {0, 0}});
+    } else {
+        work.insert({{t2, h}, {t1 - t2, 0}});
+        work.insert({{t1, h}, {0, 0}});
+    }
+
+
+    long long ans = inf;
+    int best_h = h;
+
+    while (true) {
+        auto curr = *work.begin();
+        work.erase(work.begin());
+
+        auto new_h = curr.first.second;
+        auto new_t1 = curr.second.first;
+        auto new_t2 = curr.second.second;
+
+        if (!new_t1 && !new_t2) {
+            new_h -= p1 + p2 - s;
+            new_t1 = t1;
+            new_t2 = t2;
+        } else {
+            if (!new_t1) {
+                new_h -= p1 - s;
+                new_t1 = t1;
+            } else {
+                new_h -= p2 - s;
+                new_t2 = t2;
+            }
+        }
+
+        if (new_h <= 0) {
+            ans = curr.first.first;
+            break;
+        }
+
+        if (new_t1 < new_t2) {
+            work.insert({{curr.first.first + new_t1, new_h}, {0, new_t2 - new_t1}});
+            work.insert({{curr.first.first + new_t2, new_h}, {0, 0}});
+        } else {
+            work.insert({{curr.first.first + new_t2, new_h}, {new_t1 - new_t2, 0}});
+            work.insert({{curr.first.first + new_t1, new_h}, {0, 0}});
+        }
+    }
+
+    cout << ans;
+
+    return 0;
+}
