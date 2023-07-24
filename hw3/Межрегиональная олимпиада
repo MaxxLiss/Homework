@@ -2,6 +2,8 @@
 
 using namespace std;
 
+// Можно решать ивентами
+
 // Я очень удивлюсь, если Вы разберётесь в этом коде ахахах
 int main() {
     cin.tie(nullptr); cout.tie(nullptr);
