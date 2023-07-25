@@ -17,17 +17,16 @@ void foo(int pos, int len_f, int sm) {
         ans_b = f;
         return;
     }
-    for (int i = pos; i <= n; ++i) {
-        if (len_f < k) {
-            f[pos] = true;
-            foo(pos + 1, len_f + 1, sm + (int) (g[pos] & s).count());
-            f[pos] = false;
-        }
-
-        s[pos] = true;
-        foo(pos + 1, len_f, sm + (int) (g[pos] & f).count());
-        s[pos] = false;
+    if (len_f < k) {
+        f[pos] = true;
+        foo(pos + 1, len_f + 1, sm + (int) (g[pos] & s).count());
+        f[pos] = false;
     }
+
+    s[pos] = true;
+    foo(pos + 1, len_f, sm + (int) (g[pos] & f).count());
+    s[pos] = false;
+
 }
 
 int main() {
