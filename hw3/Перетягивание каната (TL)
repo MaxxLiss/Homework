@@ -2,61 +2,55 @@
 
 using namespace std;
 
+int  n = 0, k = 0;
+int ans = 1e9;
+
+bitset<25> f, s, ans_b;
+vector<bitset<25>> g;
+
+void foo(int pos, int len_f, int sm) {
+    if (len_f + (n - pos + 1) < k || sm >= ans) {
+        return;
+    }
+    if (pos > n && sm < ans) {
+        ans = sm;
+        ans_b = f;
+        return;
+    }
+    for (int i = pos; i <= n; ++i) {
+        if (len_f < k) {
+            f[pos] = true;
+            foo(pos + 1, len_f + 1, sm + (int) (g[pos] & s).count());
+            f[pos] = false;
+        }
+
+        s[pos] = true;
+        foo(pos + 1, len_f, sm + (int) (g[pos] & f).count());
+        s[pos] = false;
+    }
+}
+
 int main() {
     cin.tie(nullptr); cout.tie(nullptr);
     ios_base::sync_with_stdio(false);
 
-    int n = 0, k = 0, m = 0;
+    int m = 0;
     cin >> n >> k >> m;
-    vector<vector<int>> g(n);
+    g = vector<bitset<25>>(n + 1);
 
-    // Возможно, стоит сделать проверку на одинаковые рёбра
     for (int i = 0; i < m; ++i) {
-        int from = 0, to = 0;
-        cin >> from >> to;
-        g[from - 1].push_back(to - 1);
+        int to, from;
+        cin >> to >> from;
+
+        g[to][from] = true;
+        g[from][to] = true;
     }
 
-    long long st = ((long long) 1 << k) - 1;
-    long long fn = (((long long) 1 << n) - 1) ^ (((long long) 1 << (n - k)) - 1);
+    foo(1, 0, 0);
 
-    int ans = 0;
-    bitset<50> l;
-    for (int i = 0; i < k; ++i) {
-        l[i] = true;
-    }
-
-    for (long long i = st; i <= fn; ++i) {
-        bitset<50> b = i;
-
-        int ind = 0;
-        int check = 0;
-        while (ind < n) {
-            check += b[ind];
-            ++ind;
-        }
-        if (check != k) {
-            continue;
-        }
-
-        int cnt = 0;
-        for (int v = 0; v < n; ++v) {
-            for (auto to : g[v]) {
-                if (b[v] == b[to]) {
-                    cnt++;
-                }
-            }
-        }
-
-        if (cnt > ans) {
-            ans = cnt;
-            l = b;
-        }
-    }
-
-    for (int i = 0; i < n; ++i) {
-        if (l[i]) {
-            cout << i + 1 << " ";
+    for (int i = 1; i < 25; ++i) {
+        if (ans_b[i]) {
+            cout << i << " ";
         }
     }
 
