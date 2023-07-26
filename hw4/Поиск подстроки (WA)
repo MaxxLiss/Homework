@@ -2,7 +2,7 @@
 
 using namespace std;
 
-static const int mod1 = 1e9 + 7, mod2 = 1e9 + 14;
+static const int mod1 = 1e9 + 7, mod2 = 1e9 + 9;
 
 int binmul(int a, int b, int mod) {
     int res = 0;
@@ -50,7 +50,7 @@ int main() {
 
     for (int i = t.size(); i <= s.size(); ++i) {
         if (binmul(hash_t1.back(), deg1[i - t.size() + 1], mod1) == hash_s1[i] - hash_s1[i - t.size()]
-            || binmul(hash_t2.back(), deg2[i], mod2) == hash_s2[i] - hash_s2[i - t.size()]) {
+            || binmul(hash_t2.back(), deg2[i - t.size() + 1], mod2) == hash_s2[i] - hash_s2[i - t.size()]) {
             cout << (i - t.size()) << " ";
         }
     }
