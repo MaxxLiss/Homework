@@ -1,0 +1,55 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int n = 0, m = 0;
+    cin >> n >> m;
+
+    vector<bitset<20>> v(n);
+
+    bitset<20> ans;
+    ans.flip();
+    bool flag = false;
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            int a = 0;
+            cin >> a;
+            v[i][j] = a;
+        }
+        if (v[i].count() == m) {
+            flag = true;
+        }
+    }
+
+    if (flag) {
+        cout << "Impossible";
+        return 0;
+    }
+
+    for (int i = 1; i < (1 << m); ++i) {
+        bitset<20> work = i;
+        bool dif = false;
+        for (int j = 0; j < n; ++j) {
+            if ((work | v[j]).count() == v[j].count()) {
+                dif = true;
+            }
+        }
+        if (!dif && work.count() < ans.count()) {
+            ans = work;
+        }
+    }
+
+    cout << ans.count() << '\n';
+    for (int i = 0; i < n; ++i) {
+        if (ans[i]) {
+            cout << i + 1 << " ";
+        }
+    }
+
+    return 0;
+}
