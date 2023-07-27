@@ -1,0 +1,50 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+static const int sm1 = 9 * 100, sm2 = 81 * 100;
+
+vector<vector<int>> dp(sm1 + 1, vector<int> (sm2 + 1, 0));
+vector<vector<int>> l(sm1 + 1, vector<int> (sm2 + 1, 0));
+void f(pair<int, int> pos, int prev, int len) {
+    if (pos.first > sm1 || pos.second > sm2 || len > 100) {
+        return;
+    }
+    if (dp[pos.first][pos.second] && l[pos.first][pos.second] <= len) {
+        return;
+    }
+    dp[pos.first][pos.second] = prev;
+    l[pos.first][pos.second] = len;
+    for (int i = 1; i < 10; ++i) {
+        f({pos.first + i, pos.second + i * i}, i, len + 1);
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int t = 0;
+    cin >> t;
+    f({0, 0}, 0, 0);
+
+    while(t--) {
+        int s1 = 0, s2 = 0;
+        cin >> s1 >> s2;
+        if (s1 > sm1 || s2 > sm2 || !dp[s1][s2]) {
+            cout << "No solution\n";
+        } else {
+            string n;
+            pair<int, int> pos = {s1, s2};
+            while (dp[pos.first][pos.second]) {
+                int num = dp[pos.first][pos.second];
+                n = to_string(num) + n;
+                pos.first -= num;
+                pos.second -= num * num;
+            }
+            cout << n << '\n';
+        }
+    }
+
+    return 0;
+}
