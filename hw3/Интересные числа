@@ -1,0 +1,109 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+static const int mod = 1e9 + 7;
+uint64_t dp[102][10][3]; //dp[len][last_digit][comp] = amount of digits // 0 - равно 1 - меньше 2 - больше
+vector<int> goal;
+
+uint64_t f(int len, int curr, int comp) {
+    if (dp[len][curr][comp] != -1) {
+        return dp[len][curr][comp];
+    }
+    if ((len == goal.size() - 1 && comp == 2) || (len == goal.size() && comp != 2)) {
+        dp[len][curr][comp] = 1;
+        return 1;
+    }
+    if (len >= goal.size()) {
+        return 0;
+    }
+    dp[len][curr][comp] = 0;
+    for (int i = curr; i < 10; ++i) {
+        if (!comp) {
+            if (goal[len] == i) {
+                dp[len][curr][comp] += f(len + 1, i, 0);
+            } else if (goal[len] < i) {
+                dp[len][curr][comp] += f(len + 1, i, 2);
+            } else {
+                dp[len][curr][comp] += f(len + 1, i, 1);
+            }
+        } else {
+            dp[len][curr][comp] += f(len + 1, i, comp);
+        }
+    }
+    if (len) {
+        dp[len][curr][comp]++;
+    }
+    return dp[len][curr][comp];
+}
+
+
+vector<int> operator--(const vector<int> &v) {
+    vector<int> v1 = v;
+    reverse(v1.begin(), v1.end());
+    v1.front()--;
+
+    if (v1.size() == 1 && !v1.front()) {
+        return {0};
+    }
+
+    int add = 0;
+    for (int &it: v1) {
+        if (add) {
+            it--;
+        }
+        if (it < 0) {
+            it += 10;
+            add = 1;
+        } else {
+            break;
+        }
+    }
+    if (!v1.back()) {
+        v1.pop_back();
+    }
+    reverse(v1.begin(), v1.end());
+    return v1;
+}
+
+int main() {
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    string sl, sr;
+    cin >> sl >> sr;
+
+    vector<int> l(sl.size()), r(sr.size()), dif = {1};
+    for (int i = 0; i < sl.size(); ++i) {
+        l[i] = sl[i] - '0';
+    }
+    for (int i = 0; i < sr.size(); ++i) {
+        r[i] = sr[i] - '0';
+    }
+    l = --l;
+
+    for (auto &a: dp) {
+        for (auto &b : a) {
+            for (auto &c : b) {
+                c = -1;
+            }
+        }
+    }
+    goal = l;
+    uint64_t ans_l = f(0, 1, 0);
+
+    for (auto &a: dp) {
+        for (auto &b : a) {
+            for (auto &c : b) {
+                c = -1;
+            }
+        }
+    }
+    goal = r;
+    uint64_t ans_r = f(0, 1, 0);
+
+    cout << (ans_r - ans_l) % mod << endl;
+
+    return 0;
+}
