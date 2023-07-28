@@ -1,0 +1,80 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int t = 0;
+    cin >> t;
+
+    while (t--) {
+        int n = 0, p = 0;
+        cin >> n >> p;
+
+        set<int> s;
+        vector<int> v(n);
+        for(int i = 0; i < n; ++i) {
+            cin >> v[i];
+            s.insert(v[i]);
+        }
+
+        int st = v.back();
+        int end = p;
+        for (auto pos = s.rbegin(); pos != s.rend(); pos++) {
+            if (end - *pos == 1 || end - *pos == 0) {
+                end = *pos;
+            } else {
+                break;
+            }
+        }
+
+        int curr = 0;
+        bool flag = *s.begin() == 0;
+        for (auto pos = s.begin(); *pos < st + 1 && flag; ++pos) {
+            if (*pos - curr == 1 || *pos == curr) {
+                curr = *pos;
+            } else {
+                flag = false;
+            }
+        }
+
+        int ans = 0;
+        if (flag) {
+            ans = max(end - st - 1, 0);
+        } else {
+            ans = p - st;
+
+            int add = 1, place = v.size() - 2;
+            s.insert(0);
+            v.back() = 0;
+            while (add) {
+                if (place < 0) {
+                    s.insert(1);
+                    break;
+                }
+                v[place]++;
+                v[place] %= p;
+                s.insert(v[place]);
+                place--;
+                if (v[place]) {
+                    add = 0;
+                }
+            }
+
+            end = st;
+            auto pos = s.find(end);
+            do {
+                if (end - *pos == 0 || end - *pos == 1) {
+                    end = *pos;
+                }
+                pos = prev(pos);
+            } while (pos != s.begin());
+            ans += max(end - 1, 0);
+        }
+        cout << ans << '\n';
+    }
+
+    return 0;
+}
