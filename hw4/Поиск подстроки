@@ -1,0 +1,64 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+static const int mod1 = 1e9 + 7, mod2 = 1e9 + 9;
+
+int binmul(int a, int b, int mod) {
+    int res = 0;
+    while (b) {
+        if (b & 1) {
+            res += a;
+            res %= mod;
+        }
+        a *= 2;
+        a %= mod;
+
+        b >>= 1;
+    }
+    return res;
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    string s, t;
+    cin >> s >> t;
+
+    srand(time(nullptr));
+    int x = rand();
+//    int x = 23797;
+
+    vector<int> deg1(s.size() + 1, 0);
+    deg1[0] = deg1[1] = 1;
+    vector<int> deg2 = deg1;
+    for (int i = 2; i < deg1.size(); ++i) {
+        deg1[i] = binmul(deg1[i - 1], x, mod1);
+        deg2[i] = binmul(deg2[i - 1], x, mod2);
+    }
+
+    int t_hash1 = 0, t_hash2 = 0;
+    for (int i = 1; i <= t.size(); ++i) {
+        t_hash1 += binmul(t[i - 1], deg1[i], mod1);
+        t_hash2 += binmul(t[i - 1], deg2[i], mod2);
+        t_hash1 %= mod1;
+        t_hash2 %= mod2;
+    }
+
+    vector<int> s_hash1(s.size() + 1, 0), s_hash2(s.size() + 1, 0);
+    for (int i = 1; i <= s.size(); ++i) {
+        s_hash1[i] = (binmul(s[i - 1], deg1[i], mod1) + s_hash1[i - 1]) % mod1;
+        s_hash2[i] = (binmul(s[i - 1], deg2[i], mod2) + s_hash2[i - 1]) % mod2;
+    }
+
+    for (int i = t.size(); i < s_hash1.size(); ++i) {
+        int l = i - t.size(), r = i;
+        if (binmul(t_hash1, deg1[l + 1], mod1) == (s_hash1[r] + mod1 - s_hash1[l]) % mod1
+            || binmul(t_hash2, deg2[l + 1], mod2) == (s_hash2[r] + mod2 - s_hash2[l]) % mod2) {
+            cout << l << " ";
+        }
+    }
+
+    return 0;
+}
