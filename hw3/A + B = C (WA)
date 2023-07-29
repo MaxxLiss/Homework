@@ -29,7 +29,7 @@ int f(int len, int prev_a, int prev_b, int add) {
         if (b == prev_b || b < 0 || b > 9) {
             continue;
         }
-        if (b && len) {
+        if (((len && b - 1 >= 0) || (!len && b - 1 > 0)) && (b - 1 != prev_b)) {
 //            dp[len][prev_a][add] += f(len + 1, i, b - 1, 1, sa + to_string(i), sb + to_string(b - 1));
             dp[len][prev_a][add] += f(len + 1, i, b - 1, 1);
             dp[len][prev_a][add] %= mod;
