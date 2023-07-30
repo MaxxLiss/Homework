@@ -1,0 +1,89 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+static const int mod1 = 1e9 + 7, mod2 = 1e9 + 9;
+
+int mul(int a, int b, int mod) {
+    return (int) ((long long) a * b % mod);
+}
+
+int dif(int a, int b, int mod) {
+    return (a - b + mod) % mod;
+}
+
+int sum(int a, int b, int mod) {
+    return (a + b) % mod;
+}
+
+string s;
+int len = 0;
+
+vector<int> deg1, deg2;
+vector<int> hash1, hash2;
+
+// 1 - a > b
+// 0 - a <= b
+auto comp = [](int a, int b) {
+    int l = -1, r = len - 1;
+    while (l + 1 != r) {
+        int m = (l + r) / 2;
+        if (mul(dif(hash1[a + m], hash1[a - 1], mod1), deg1[b], mod1)
+            == mul(dif(hash1[b + m], hash1[b - 1], mod1), deg1[a], mod1)
+            || mul(dif(hash2[a + m], hash2[a - 1], mod2), deg2[b], mod2)
+            == mul(dif(hash2[b + m], hash2[b - 1], mod2), deg2[a], mod2)) {
+            l = m;
+        } else {
+            r = m;
+        }
+    }
+    return s[a + l + 1] > s[b + l + 1];
+};
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> s;
+    len = (int) s.size();
+    s = " " + s + s;
+
+    srand(time(nullptr));
+    int x = rand();
+
+    deg1 = vector<int> (s.size(), 0);
+    deg1[1] = 1;
+    deg2 = deg1;
+    for (int i = 2; i < deg1.size(); ++i) {
+        deg1[i] = mul(deg1[i - 1], x, mod1);
+        deg2[i] = mul(deg2[i - 1], x, mod2);
+    }
+
+    hash1 = hash2 = vector<int> (s.size(), 0);
+    for (int i = 1; i < hash1.size(); ++i) {
+        hash1[i] = sum(mul(s[i], deg1[i], mod1), hash1[i - 1], mod1);
+        hash2[i] = sum(mul(s[i], deg2[i], mod2), hash2[i - 1], mod2);
+    }
+
+    set<int, decltype(comp)> st;
+    int pos = 1, best_l = 1;
+    st.insert(1);
+    for (int i = 2; i + len < s.size(); ++i) {
+//        if (comp(1, i)) {
+//            pos++;
+//        }
+        st.insert(i);
+    }
+
+    for (auto it : st) {
+        string ans;
+        for (int i = best_l; i < best_l + len; ++i) {
+            ans += s[i];
+        }
+        cout << ans << endl;
+    }
+
+    cout << pos;
+
+    return 0;
+}
