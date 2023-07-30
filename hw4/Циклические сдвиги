@@ -31,7 +31,7 @@ auto comp = [](int a, int b) {
         if (mul(dif(hash1[a + m], hash1[a - 1], mod1), deg1[b], mod1)
             == mul(dif(hash1[b + m], hash1[b - 1], mod1), deg1[a], mod1)
             || mul(dif(hash2[a + m], hash2[a - 1], mod2), deg2[b], mod2)
-            == mul(dif(hash2[b + m], hash2[b - 1], mod2), deg2[a], mod2)) {
+               == mul(dif(hash2[b + m], hash2[b - 1], mod2), deg2[a], mod2)) {
             l = m;
         } else {
             r = m;
@@ -65,25 +65,22 @@ int main() {
         hash2[i] = sum(mul(s[i], deg2[i], mod2), hash2[i - 1], mod2);
     }
 
-    set<int, decltype(comp)> st;
-    int pos = 1, best_l = 1;
+    multiset<int, decltype(comp)> st(comp);
+    int pos = 1;
     st.insert(1);
     for (int i = 2; i + len < s.size(); ++i) {
-//        if (comp(1, i)) {
-//            pos++;
-//        }
+        if (comp(1, i)) {
+            pos++;
+        }
         st.insert(i);
     }
 
+    string ans;
     for (auto it : st) {
-        string ans;
-        for (int i = best_l; i < best_l + len; ++i) {
-            ans += s[i];
-        }
-        cout << ans << endl;
+        ans = s[it + len - 1] + ans;
     }
 
-    cout << pos;
+    cout << pos << endl << ans;
 
     return 0;
 }
