@@ -56,7 +56,13 @@ int main() {
                     qu.push(from);
                     qu.push(to);
                     zeros(pos);
-                } else if (from <= to) {
+                }
+            }
+        }
+        for (int from = n; from > 0; --from) {
+            for (auto work : g[from]) {
+                int to = work.first, x = work.second;
+                if (from <= to && (x & pos)) {
                     if (!(v[from] & pos)) {
                         v[to] |= pos;
                     }
