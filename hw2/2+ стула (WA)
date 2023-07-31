@@ -1,0 +1,73 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+vector<vector<pair<int,int>>> g;
+vector<int> v;
+
+queue<int> qu;
+bitset<(int) 1e5 + 1> used_zeros;
+
+void zeros(int pos) {
+    while (!qu.empty()) {
+        int from = qu.front();
+        qu.pop();
+        if (used_zeros[from]) {
+            continue;
+        }
+        for (auto work : g[from]) {
+            int to = work.first, x = work.second;
+            if (!(x & pos) && !used_zeros[to]) {
+                qu.push(to);
+            } else if (x & pos) {
+                v[to] |= pos;
+            }
+        }
+        used_zeros[from] = true;
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int n = 0, q = 0;
+    cin >> n >> q;
+
+    g = vector<vector<pair<int,int>>> (n + 1);
+    v = vector<int> (n + 1, 0);
+
+    while (q--) {
+        int from = 0, to = 0;
+        cin >> from >> to;
+        int x = 0;
+        cin >> x;
+        g[from].emplace_back(to, x);
+        g[to].emplace_back(from, x);
+    }
+
+    for (int i = 0; i <= 29; ++i) {
+        int pos = (1 << i);
+        used_zeros = 0;
+        for (int from = n; from > 0; --from) {
+            for (auto work : g[from]) {
+                int to = work.first, x = work.second;
+                if (!(x & pos)) {
+                    qu.push(from);
+                    qu.push(to);
+                    zeros(pos);
+                } else if (from <= to) {
+                    if (!(v[from] & pos)) {
+                        v[to] |= pos;
+                    }
+                }
+            }
+        }
+    }
+
+    for (int i = 1; i <= n; ++i) {
+        cout << v[i] << " ";
+    }
+
+    return 0;
+}
