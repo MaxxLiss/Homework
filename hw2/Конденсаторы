@@ -1,0 +1,70 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+bool ans = false;
+double c = 0;
+static const double add = 1000;
+static const double eps = 0.01 * add;
+
+set<double> f(vector<double> &v) {
+    set<double> res;
+    if (ans || v.size() == 1) {
+        return {v.front()};
+    }
+    for (int i = 1; i < (1 << v.size()) - 1; ++i) {
+        vector<double> a, b;
+        for (int j = 0; j < v.size(); ++j) {
+            if (i & (1 << j)) {
+                a.push_back(v[j]);
+            } else {
+                b.push_back(v[j]);
+            }
+        }
+        auto res_a = f(a), res_b = f(b);
+        for (auto it_a : res_a) {
+            for (auto it_b : res_b) {
+                auto add1 = it_a + it_b;
+                auto add2 = (it_a * it_b) / add1;
+                if (abs(c - add1) <= eps || abs(c - add2) <= eps) {
+                    ans = true;
+                }
+                res.insert(add1);
+                res.insert(add2);
+            }
+            if (abs(it_a - c) <= eps) {
+                ans = true;
+            }
+            res.insert(it_a);
+        }
+        for (auto it_b : res_b) {
+            if (abs(it_b - c) <= eps) {
+                ans = true;
+            }
+            res.insert(it_b);
+        }
+    }
+    return res;
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int n = 0;
+    cin >> n >> c;
+
+    c *= add;
+
+    vector<double> work(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> work[i];
+        work[i] *= add;
+    }
+
+    f(work);
+
+    cout << (ans ? "YES" : "NO");
+
+    return 0;
+}
