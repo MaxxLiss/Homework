@@ -61,7 +61,7 @@ int main() {
             }
             for (auto work: g[from]) {
                 int to = work.first, x = work.second;
-                if ((x & pos) && (from >= to || used_zeros[to])) {
+                if ((x & pos) && (from >= to || used_zeros[to]) && !(v[to] & pos)) {
                     v[from] |= pos;
                 }
             }
