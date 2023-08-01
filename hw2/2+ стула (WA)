@@ -2,7 +2,7 @@
 
 using namespace std;
 
-vector<vector<pair<int,int>>> g;
+vector<vector<pair<int, int>>> g;
 vector<int> v;
 
 queue<int> qu;
@@ -15,12 +15,10 @@ void zeros(int pos) {
         if (used_zeros[from]) {
             continue;
         }
-        for (auto work : g[from]) {
+        for (auto work: g[from]) {
             int to = work.first, x = work.second;
             if (!(x & pos) && !used_zeros[to]) {
                 qu.push(to);
-            } else if (x & pos) {
-                v[to] |= pos;
             }
         }
         used_zeros[from] = true;
@@ -34,14 +32,12 @@ int main() {
     int n = 0, q = 0;
     cin >> n >> q;
 
-    g = vector<vector<pair<int,int>>> (n + 1);
-    v = vector<int> (n + 1, 0);
+    g = vector<vector<pair<int, int>>>(n + 1);
+    v = vector<int>(n + 1, 0);
 
     while (q--) {
-        int from = 0, to = 0;
-        cin >> from >> to;
-        int x = 0;
-        cin >> x;
+        int from = 0, to = 0, x = 0;
+        cin >> from >> to >> x;
         g[from].emplace_back(to, x);
         g[to].emplace_back(from, x);
     }
@@ -49,8 +45,8 @@ int main() {
     for (int i = 0; i <= 29; ++i) {
         int pos = (1 << i);
         used_zeros = 0;
-        for (int from = n; from > 0; --from) {
-            for (auto work : g[from]) {
+        for (int from = 1; from <= n; ++from) {
+            for (auto work: g[from]) {
                 int to = work.first, x = work.second;
                 if (!(x & pos)) {
                     qu.push(from);
@@ -59,13 +55,14 @@ int main() {
                 }
             }
         }
-        for (int from = n; from > 0; --from) {
-            for (auto work : g[from]) {
+        for (int from = 1; from <= n; ++from) {
+            if (used_zeros[from]) {
+                continue;
+            }
+            for (auto work: g[from]) {
                 int to = work.first, x = work.second;
-                if (from <= to && (x & pos)) {
-                    if (!(v[from] & pos)) {
-                        v[to] |= pos;
-                    }
+                if ((x & pos) && (from >= to || used_zeros[to])) {
+                    v[from] |= pos;
                 }
             }
         }
