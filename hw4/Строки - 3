@@ -1,0 +1,92 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+static const int mod[] = {(int) 1e9 + 7, (int) 1e9 + 9};
+static const int base[] = {1903345, 924889023};
+static const int N = 3 * 1e5 + 1;
+static const int SHIFT = 1e9 + 11;
+
+int gwx[N][2], h[N][2];
+
+string s;
+int len_a, len_b = 0;
+
+int mul(int a, int b, int j) {
+    return (int) ((long long) a * b % mod[j]);
+}
+
+int sum(int a, int b, int j) {
+    return (a += b) < mod[j] ? a : a - mod[j];
+}
+
+int dif(int a, int b, int j) {
+    return (a -= b) < 0 ? a + mod[j] : a;
+}
+
+int bpow(int a, int b, int j) {
+    int res = 1;
+    while (b) {
+        if (b & 1) {
+            res = mul(res, a, j);
+        }
+        a = mul(a, a, j);
+        b >>= 1;
+    }
+    return res;
+}
+
+int inv(int a, int j) {
+    return bpow(a, mod[j] - 2, j);
+}
+
+int getHash(int l, int r, int j) {
+    if (!l) {
+        return h[r][j];
+    }
+    return dif(h[r][j], h[l - 1][j], j);
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    string a, b;
+    cin >> a >> b;
+    s = b + b + a;
+    len_b = (int) b.size();
+    len_a = (int) a.size();
+
+    for (int j = 0; j < 2; ++j) {
+        gwx[0][j] = 1;
+        for (int i = 1; i < s.size(); ++i) {
+            gwx[i][j] = mul(gwx[i - 1][j], base[j], j);
+        }
+    }
+
+    for (int j = 0; j < 2; ++j) {
+        h[0][j] = s[0];
+        for (int i = 1; i < s.size(); ++i) {
+            h[i][j] = sum(h[i - 1][j], mul(s[i], gwx[i][j], j), j);
+        }
+    }
+
+    unordered_set<uint64_t> st;
+    for (int i = 0; i + len_b <= s.size() - len_a - 1; ++i) {
+        st.insert((uint64_t) mul(getHash(i, i + len_b - 1, 0), inv(gwx[i][0], 0), 0) * SHIFT
+            + mul(getHash(i, i + len_b - 1, 1), inv(gwx[i][1], 1), 1));
+    }
+
+    int ans = 0;
+    for (int i = 2 * len_b; i + len_b <= s.size(); ++i) {
+        auto tmp = (uint64_t) mul(getHash(i, i + len_b - 1, 0), inv(gwx[i][0], 0), 0) * SHIFT
+                           + mul(getHash(i, i + len_b - 1, 1), inv(gwx[i][1], 1), 1);
+        if (st.find(tmp) != st.end()) {
+            ans++;
+        }
+    }
+
+    cout << ans;
+
+    return 0;
+}
