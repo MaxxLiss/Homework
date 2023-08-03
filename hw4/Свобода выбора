@@ -1,0 +1,107 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+static const int mod[] = {(int) 1e9 + 7, (int) 1e9 + 9};
+static const int base[] = {4089934, 83316743};
+static const int N = 2 * 1e5 + 1;
+static const int SHIFT = 1e9 + 11;
+
+int pwx[N][2], h[N][2];
+
+int mul(int a, int b, int m) {
+    return (int) ((long long) a * b % mod[m]);
+}
+
+int sum(int a, int b, int m) {
+    return (a += b) < mod[m] ? a : a - mod[m];
+}
+
+int dif(int a, int b, int m) {
+    return (a -= b) < 0 ? a + mod[m] : a;
+}
+
+int bpow(int a, int p, int m) {
+    int res = 1;
+    while (p) {
+        if (p & 1) {
+            res = mul(res, a, m);
+        }
+        a = mul(a, a, m);
+        p >>= 1;
+    }
+    return res;
+}
+
+int inv(int a, int m) {
+    return bpow(a, mod[m] - 2, m);
+}
+
+int getHash(int l, int r, int m) {
+    if (!l) {
+        return h[r][m];
+    }
+    return dif(h[r][m], h[l - 1][m], m);
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    string s, tmp;
+    int len = 0;
+    cin >> len;
+    cin >> s >> tmp;
+    s += tmp;
+
+    for (int j = 0; j < 2; ++j) {
+        pwx[0][j] = 1;
+        for (int i = 1; i < s.size(); ++i) {
+            pwx[i][j] = mul(pwx[i - 1][j], base[j], j);
+        }
+    }
+
+    for (int j = 0; j < 2; ++j) {
+        h[0][j] = s[0];
+        for (int i = 1; i < s.size(); ++i) {
+            h[i][j] = sum(h[i - 1][j], mul(s[i], pwx[i][j], j), j);
+        }
+    }
+
+    int pos = 0;
+    int l = 0, r = len + 1;
+    while (l + 1 != r) {
+        unordered_set<uint64_t> st;
+        auto w = (l + r) >> 1;
+        for (int i = 0; i + w <= len; ++i) {
+            auto hi = (uint64_t) mul(getHash(i, i + w - 1, 0), inv(pwx[i][0], 0), 0) * SHIFT +
+                    mul(getHash(i, i + w - 1, 1), inv(pwx[i][1], 1), 1);
+            st.insert(hi);
+        }
+        bool flag = false;
+        for (int i = len; i + w <= s.size() && !flag; ++i) {
+            auto hi = (uint64_t) mul(getHash(i, i + w - 1, 0), inv(pwx[i][0], 0), 0) * SHIFT +
+                    mul(getHash(i, i + w - 1, 1), inv(pwx[i][1], 1), 1);
+            if (st.find(hi) != st.end()) {
+                pos = i;
+                flag = true;
+            }
+        }
+        if (flag) {
+            l = w;
+        } else {
+            r = w;
+        }
+    }
+
+    string ans;
+    if (l) {
+        for (int i = pos; i < pos + l; ++i) {
+            ans += s[i];
+        }
+    }
+
+    cout << ans;
+
+    return 0;
+}
