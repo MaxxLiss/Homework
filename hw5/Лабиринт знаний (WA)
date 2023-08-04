@@ -1,0 +1,56 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+static const int INF = -1e9;
+
+struct edge {
+    int from, to, cost;
+
+    edge() {}
+
+    edge(int from, int to, int cost) : from(from), to(to), cost(cost) {}
+};
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    freopen("maze.in", "r", stdin);
+    freopen("maze.out", "w", stdout);
+
+    int n = 0, m = 0;
+    cin >> n >> m;
+    vector<int> dist(n, INF);
+    vector<edge> e(m);
+
+    for (int i = 0; i < m; ++i) {
+        int from = 0, to = 0, cost = 0;
+        cin >> from >> to >> cost;
+        from--; to--;
+        e[i] = {from, to, cost};
+    }
+
+    bool is_cycle = false;
+    dist[0] = 0;
+    for (int i = 1; i <= n; ++i) {
+        bool upd = false;
+        for (int j = 0; j < m; ++j) {
+            if (dist[e[j].from] != INF && dist[e[j].to] < dist[e[j].from] + e[j].cost) {
+                dist[e[j].to] = dist[e[j].from] + e[j].cost;
+                upd = true;
+            }
+        }
+        is_cycle = (i == n && upd);
+    }
+
+    if (dist[n - 1] == INF) {
+        cout << ":(";
+    } else if (is_cycle) {
+        cout << ":)";
+    } else {
+        cout << dist[n - 1];
+    }
+
+    return 0;
+}
