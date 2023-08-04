@@ -1,0 +1,19 @@
+t = int(input())
+
+s = set()
+
+for q in range(2, int(1e6)):
+    for a in range(3, int(1e6)):
+        sm = (1 - q ** a) / (1 - q)
+        if sm > 1e6:
+            break
+        s.add(sm)
+
+for _ in range(t):
+    ans = False
+    n = int(input())
+    for i in s:
+        if n == i:
+            ans = True
+            break
+    print('YES' if ans else 'NO')
