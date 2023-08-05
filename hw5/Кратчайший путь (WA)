@@ -2,26 +2,24 @@
 
 using namespace std;
 
-static const long long INF = 4 * 1e18;
+const long long INF = 3 * 1e18;
+const int N = 2 * 1e3, M = 5 * 1e3;
 
 struct edge {
     int from = 0, to = 0, cost = 0;
-
-    edge() = default;
-
-    edge(int from, int to, int cost) : from(from), to(to), cost(cost) {}
 };
 
-long long dist[2000];
-int p[2000];
-edge e[5000];
+long long dist[N];
+int p[N];
+edge e[M];
 
 void find_cycle(int v) {
-    if (dist[v] == -INF) {
-        return;
-    }
     dist[v] = -INF;
-    find_cycle(p[v]);
+
+    if (dist[p[v]] != -INF) {
+        find_cycle(p[v]);
+    }
+
 }
 
 int main() {
@@ -35,7 +33,7 @@ int main() {
     cin >> n >> m >> s;
     s--;
 
-    fill_n(dist, 2000, INF);
+    fill_n(dist, N, INF);
     dist[s] = 0;
 
     for (int i = 0; i < m; ++i) {
@@ -48,7 +46,7 @@ int main() {
         for (int j = 0; j < m; ++j) {
             int from = e[j].from, to = e[j].to, cost = e[j].cost;
             if (dist[from] != INF && dist[to] > dist[from] + cost) {
-                dist[to] = dist[from] + cost;
+                dist[to] = max(dist[from] + cost, -INF + 1);
                 p[to] = from;
                 if (i == n - 1) {
                     find_cycle(to);
