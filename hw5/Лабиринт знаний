@@ -2,15 +2,27 @@
 
 using namespace std;
 
-static const int INF = -1e9;
+static const int INF = 1e9;
+static const int N = 2 * 1e3, M = 1e4;
 
 struct edge {
-    int from, to, cost;
+    int from = 0, to = 0, cost = 0;
 
-    edge() {}
+    edge() = default;
 
     edge(int from, int to, int cost) : from(from), to(to), cost(cost) {}
 };
+
+int dist[N], p[N];
+edge e[M];
+
+void find_cycle(int v) {
+    if (dist[v] == INF) {
+        return;
+    }
+    dist[v] = INF;
+    find_cycle(p[v]);
+}
 
 int main() {
     cin.tie(nullptr); cout.tie(nullptr);
@@ -21,8 +33,8 @@ int main() {
 
     int n = 0, m = 0;
     cin >> n >> m;
-    vector<int> dist(n, INF);
-    vector<edge> e(m);
+    fill_n(dist, N, -INF);
+    dist[0] = 0;
 
     for (int i = 0; i < m; ++i) {
         int from = 0, to = 0, cost = 0;
@@ -31,25 +43,28 @@ int main() {
         e[i] = {from, to, cost};
     }
 
-    bool is_cycle = false;
     dist[0] = 0;
     for (int i = 1; i <= n; ++i) {
-        bool upd = false;
         for (int j = 0; j < m; ++j) {
-            if (dist[e[j].from] != INF && dist[e[j].to] < dist[e[j].from] + e[j].cost) {
+            if (dist[e[j].from] != -INF && dist[e[j].to] < dist[e[j].from] + e[j].cost) {
                 dist[e[j].to] = dist[e[j].from] + e[j].cost;
-                upd = true;
+                if (i == n) {
+                    find_cycle(e[j].to);
+                }
             }
         }
-        is_cycle = (i == n && upd);
     }
 
-    if (dist[n - 1] == INF) {
-        cout << ":(";
-    } else if (is_cycle) {
-        cout << ":)";
-    } else {
-        cout << dist[n - 1];
+    switch (dist[n - 1]) {
+        case -INF:
+            cout << ":(";
+            break;
+        case INF:
+            cout << ":)";
+            break;
+        default:
+            cout << dist[n - 1];
+            break;
     }
 
     return 0;
