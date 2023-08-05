@@ -1,0 +1,69 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 300;
+
+long long g[N][N];
+long long sum = 0;
+int n = 0;
+
+void solve() {
+    int from = 0, to = 0, cost = 0;
+    cin >> from >> to >> cost;
+    from--;
+    to--;
+    if (g[from][to] <= cost) {
+        cout << sum / 2 << " ";
+        return;
+    } else {
+        sum += 2 * (cost - g[from][to]);
+
+        g[from][to] = cost;
+        g[to][from] = cost;
+    }
+
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (g[i][j] > g[i][from] + g[from][j]) {
+                sum += g[i][from] + g[from][j] - g[i][j];
+                g[i][j] = g[i][from] + g[from][j];
+            }
+        }
+    }
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (g[i][j] > g[i][to] + g[to][j]) {
+                sum += g[i][to] + g[to][j] - g[i][j];
+                g[i][j] = g[i][to] + g[to][j];
+            }
+        }
+    }
+
+    cout << sum / 2 << " ";
+
+}
+
+int main() {
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> n;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            cin >> g[i][j];
+            sum += g[i][j];
+        }
+    }
+
+    int k = 0;
+    cin >> k;
+
+    while (k--) {
+        solve();
+    }
+
+    return 0;
+}
