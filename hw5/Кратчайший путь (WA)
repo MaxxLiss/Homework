@@ -1,0 +1,75 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+static const long long INF = 4 * 1e18;
+
+struct edge {
+    int from = 0, to = 0, cost = 0;
+
+    edge() = default;
+
+    edge(int from, int to, int cost) : from(from), to(to), cost(cost) {}
+};
+
+long long dist[2000];
+int p[2000];
+edge e[5000];
+
+void find_cycle(int v) {
+    if (dist[v] == -INF) {
+        return;
+    }
+    dist[v] = -INF;
+    find_cycle(p[v]);
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    freopen("path.in", "r", stdin);
+    freopen("path.out", "w", stdout);
+
+    int n = 0, m = 0, s = 0;
+    cin >> n >> m >> s;
+    s--;
+
+    fill_n(dist, 2000, INF);
+    dist[s] = 0;
+
+    for (int i = 0; i < m; ++i) {
+        int from = 0, to = 0, cost = 0;
+        cin >> from >> to >> cost;
+        e[i] = {from - 1, to - 1, cost};
+    }
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            int from = e[j].from, to = e[j].to, cost = e[j].cost;
+            if (dist[from] != INF && dist[to] > dist[from] + cost) {
+                dist[to] = dist[from] + cost;
+                p[to] = from;
+                if (i == n - 1) {
+                    find_cycle(to);
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < n; ++i) {
+        switch (dist[i]) {
+            case INF:
+                cout << "*\n";
+                break;
+            case -INF:
+                cout << "-\n";
+                break;
+            default:
+                cout << dist[i] << '\n';
+                break;
+        }
+    }
+
+    return 0;
+}
