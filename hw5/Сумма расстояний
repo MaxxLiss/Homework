@@ -1,0 +1,52 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 1e3 + 1;
+int dist[N];
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    freopen("sumdist.in", "r", stdin);
+    freopen("sumdist.out", "w", stdout);
+
+    int n = 0, m = 0;
+    cin >> n >> m;
+
+    vector<vector<int>> g(n + 1);
+    for (int i = 0; i < m; ++i) {
+        int v = 0, u = 0;
+        cin >> v >> u;
+        g[v].push_back(u);
+        g[u].push_back(v);
+    }
+
+    long long ans = 0;
+
+    queue<int> q;
+    for (int i = 1; i <= n; ++i) {
+        fill_n(dist, n + 1, -1);
+        dist[i] = 0;
+        q.push(i);
+
+        while (!q.empty()) {
+            int from = q.front();
+            q.pop();
+
+            for (auto to : g[from]) {
+                if (dist[to] == -1) {
+                    dist[to] = dist[from] + 1;
+                    ans += dist[to];
+
+                    q.push(to);
+                }
+            }
+        }
+    }
+
+    cout << ans / 2;
+
+    return 0;
+}
