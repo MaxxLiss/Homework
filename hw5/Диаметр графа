@@ -1,0 +1,51 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const static int INF = 1e9, N = 1e2;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    freopen("diameter.in", "r", stdin);
+    freopen("diameter.out", "w", stdout);
+
+    int n = 0;
+    cin >> n;
+
+    int dist[N][N];
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            cin >> dist[i][j];
+            if (dist[i][j] < 0) {
+                dist[i][j] = INF;
+            }
+        }
+    }
+
+    int d = -1, ex = INF;
+    for (int k = 0; k < n; ++k) {
+        for (int i = 0; i < n; ++i) {
+            int loc_ex = -1;
+            for (int j = 0; j < n; ++j) {
+                if (dist[i][k] != INF && dist[k][j] != INF) {
+                    dist[i][j] = min(dist[i][k] + dist[k][j], dist[i][j]);
+                }
+                if (dist[i][j] != INF && i != j) {
+                    loc_ex = max(loc_ex, dist[i][j]);
+                }
+            }
+            if (k == n - 1) {
+                d = max(loc_ex, d);
+                if (loc_ex != -1) {
+                    ex = min(loc_ex, ex);
+                }
+            }
+        }
+    }
+
+    cout << d << "\n" << ex;
+
+    return 0;
+}
