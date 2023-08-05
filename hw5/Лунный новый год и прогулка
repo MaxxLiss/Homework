@@ -1,0 +1,49 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 1e5 + 1;
+
+int used[N], ans[N];
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int n = 0, m = 0;
+    cin >> n >> m;
+
+    memset(used, 0, sizeof used);
+    vector<vector<int>> g(n + 1);
+    for (int i = 0; i < m; ++i) {
+        int v = 0, u = 0;
+        cin >> v >> u;
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+
+    int last_pos = 0;
+    used[1] = 1;
+
+    priority_queue<int> q;
+    q.push(-1);
+
+    while (!q.empty()) {
+        int from = -q.top();
+        q.pop();
+
+        ans[last_pos] = from;
+        last_pos++;
+
+        for (auto to : g[from]) if (!used[to]) {
+            q.push(-to);
+            used[to] = 1;
+        }
+    }
+
+    for (int i = 0; i < n; ++i) {
+        cout << ans[i] << " ";
+    }
+
+    return 0;
+}
