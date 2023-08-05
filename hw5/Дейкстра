@@ -1,0 +1,52 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const static int INF = 1e9, N = 2 * 1e3;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    freopen("dijkstra.in", "r", stdin);
+    freopen("dijkstra.out", "w", stdout);
+
+    int n = 0, s = 0, f = 0;
+    cin >> n >> s >> f;
+    s--; f--;
+
+    vector<vector<pair<int, int>>> g(n);
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            int cost = 0;
+            cin >> cost;
+            if (cost > 0) {
+                g[i].emplace_back(j, cost);
+            }
+        }
+    }
+
+    int dist[N];
+    fill_n(dist, N, INF);
+    dist[s] = 0;
+
+    priority_queue<pair<int, int>> q;
+    q.emplace(0, s);
+
+    while (!q.empty()) {
+        int from = q.top().second;
+        q.pop();
+
+        for (auto it : g[from]) {
+            int to = it.first, cost = it.second;
+            if (dist[to] > dist[from] + cost) {
+                dist[to] = dist[from] + cost;
+                q.emplace(dist[to], to);
+            }
+        }
+    }
+
+    cout << (dist[f] == INF ? -1 : dist[f]);
+
+    return 0;
+}
