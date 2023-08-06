@@ -1,0 +1,134 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+struct go {
+    int up = 0, down = 0, left = 0, right = 0;
+};
+
+const int N = 1e3 + 1;
+
+go used[N][N];
+int dist[N][N];
+int field[N][N];
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    memset(dist, -1, sizeof dist);
+    memset(field, 0, sizeof field);
+
+    queue<pair<int, int>> q;
+
+    string data;
+    int n = 0, m = 0;
+    cin >> n >> m;
+    for (int i = 0; i < n - 1; ++i) {
+        cin >> data;
+        for (int j = 0; j < m; ++j) {
+            field[i][j] = (data[j] == '#');
+        }
+    }
+    cin >> data;
+    for (int j = 0; j < m; ++j) {
+        field[n - 1][j] = (data[j] == '#');
+        if (field[n - 1][j]) {
+            dist[n - 1][j] = 1;
+            used[n - 1][j].right = 1;
+            used[n - 1][j].left = 1;
+            used[n - 1][j].down = 1;
+            q.emplace(n - 1, j);
+        }
+    }
+
+    if (field[n - 1][m - 1]) {
+        dist[n - 1][m - 1] = 1;
+        used[n - 1][m - 1].left = 1;
+        used[n - 1][m - 1].right = 1;
+        used[n - 1][m - 1].down = 1;
+        q.emplace(n - 1, m - 1);
+    }
+
+    int ans = -1;
+
+    while (!q.empty() && ans == -1) {
+        auto pos = q.front();
+        q.pop();
+
+        if (!used[pos.first][pos.second].up) {
+            auto tmp = pos;
+            --tmp.first;
+            while (tmp.first >= 0) {
+                if (field[tmp.first][tmp.second]) {
+                    if (dist[tmp.first][tmp.second] == -1) {
+                        dist[tmp.first][tmp.second] = dist[pos.first][pos.second] + 1;
+                        q.push(tmp);
+                        if (tmp.first == 0) {
+                            ans = dist[tmp.first][tmp.second];
+                        }
+                    }
+                    used[tmp.first][tmp.second].down = 1;
+                    used[tmp.first][tmp.second].up = 1;
+                }
+                --tmp.first;
+            }
+            used[pos.first][pos.second].up = 1;
+        }
+
+        if (!used[pos.first][pos.second].right) {
+            auto tmp = pos;
+            ++tmp.second;
+            while (tmp.second < m) {
+                if (field[tmp.first][tmp.second]) {
+                    if (dist[tmp.first][tmp.second] == -1) {
+                        dist[tmp.first][tmp.second] = dist[pos.first][pos.second] + 1;
+                        q.push(tmp);
+                    }
+                    used[tmp.first][tmp.second].left = 1;
+                    used[tmp.first][tmp.second].right = 1;
+                }
+                ++tmp.second;
+            }
+            used[pos.first][pos.second].right = 1;
+        }
+
+        if (!used[pos.first][pos.second].down) {
+            auto tmp = pos;
+            ++tmp.first;
+            while (tmp.first < n) {
+                if (field[tmp.first][tmp.second]) {
+                    if (dist[tmp.first][tmp.second] == -1) {
+                        dist[tmp.first][tmp.second] = dist[pos.first][pos.second] + 1;
+                        q.push(tmp);
+                    }
+                    used[tmp.first][tmp.second].up = 1;
+                    used[tmp.first][tmp.second].down = 1;
+                }
+                ++tmp.first;
+            }
+            used[pos.first][pos.second].down = 1;
+        }
+
+        if (!used[pos.first][pos.second].left) {
+            auto tmp = pos;
+            --tmp.second;
+            while (tmp.second >= 0) {
+                if (field[tmp.first][tmp.second]) {
+                    if (dist[tmp.first][tmp.second] == -1) {
+                        dist[tmp.first][tmp.second] = dist[pos.first][pos.second] + 1;
+                        q.push(tmp);
+                    }
+                    used[tmp.first][tmp.second].right = 1;
+                    used[tmp.first][tmp.second].left = 1;
+                }
+                --tmp.second;
+            }
+            used[pos.first][pos.second].left = 1;
+        }
+    }
+
+    cout << ans;
+
+    return 0;
+}
