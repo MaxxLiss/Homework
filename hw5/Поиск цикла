@@ -1,0 +1,75 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 1e5;
+
+int used[N], p[N];
+vector<int> g[N];
+int start_cycle = -1;
+
+bool dfs(int v) {
+    for (int to : g[v]) {
+        if (!used[to]) {
+            p[to] = v;
+            used[to] = 1;
+
+            if (dfs(to)) {
+                return true;
+            }
+
+            used[to] = 2;
+        } else if (used[to] == 1) {
+            p[to] = v;
+            start_cycle = to;
+            return true;
+        }
+    }
+    return false;
+}
+
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    freopen("cycle.in", "r", stdin);
+    freopen("cycle.out", "w", stdout);
+
+    memset(used, 0, sizeof used);
+    memset(p, 0, sizeof p);
+
+    int n = 0, m = 0;
+    cin >> n >> m;
+
+    for (int i = 0; i < m; ++i) {
+        int from = 0, to = 0;
+        cin >> from >> to;
+        g[from].push_back(to);
+    }
+
+    for (int i = 1; i <= n && start_cycle == -1; ++i) {
+        if (!used[i]) {
+            dfs(i);
+        }
+    }
+
+    if (start_cycle == -1) {
+        cout << "NO";
+    } else {
+        cout << "YES\n";
+        deque<int> ans;
+
+        int curr = start_cycle;
+        do {
+            ans.push_back(curr);
+            curr = p[curr];
+        } while (curr != start_cycle);
+
+        for (auto i = ans.rbegin(); i != ans.rend(); ++i) {
+            cout << *i << " ";
+        }
+    }
+
+    return 0;
+}
