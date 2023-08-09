@@ -1,0 +1,50 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 2e5 + 1, T = 1e4 + 1;
+const int INF = 1e9;
+
+int t = 0;
+deque<int> c[T][N];
+pair<int, int> mx[T][N];
+
+void solve() {
+    auto ans = INF;
+    int n = 0, k = 0;
+    cin >> n >> k;
+    for (int i = 0; i < n; ++i) {
+        int color = 0;
+        cin >> color;
+        if (!c[t][color].empty()) {
+            auto dif = i - c[t][color].back();
+            if (dif > mx[t][color].first) {
+                mx[t][color].second = mx[t][color].first;
+                mx[t][color].first = dif;
+            } else if (dif > mx[t][color].second) {
+                mx[t][color].second = dif;
+            }
+        }
+    }
+    for (int i = 1; i <= k; ++i) {
+        int tmp = max(mx[t][i].first / 2 + mx[t][i].first % 2, mx[t][i].second);
+        if (tmp != -1 && tmp < ans) {
+            ans = tmp;
+        }
+    }
+    cout << ans - 1 << '\n';
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    memset(mx, -1, sizeof mx);
+    cin >> t;
+
+    while(t--) {
+        solve();
+    }
+
+    return 0;
+}
