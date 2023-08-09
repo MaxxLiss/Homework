@@ -1,0 +1,59 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 2e5 + 1;
+
+int d[N], up[N];
+vector<int> g[N];
+bool is_bridge = false;
+deque<pair<int, int>> ans;
+
+void dfs(int v, int p) {
+    d[v] = d[p] + 1;
+    up[v] = d[v];
+
+    for (auto to : g[v]) if (to != p) {
+        if (!d[to]) {
+            dfs(to, v);
+            ans.emplace_back(v, to);
+            up[v] = min(up[v], up[to]);
+
+            if (d[v] < up[to]) {
+                is_bridge = true;
+            }
+        } else if (d[v] > d[to]) {
+            up[v] = min(d[to], up[v]);
+            ans.emplace_back(v, to);
+        }
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    memset(d, 0, sizeof d);
+
+    int n = 0, m = 0;
+    cin >> n >> m;
+
+    for (int i = 0; i < m; ++i) {
+        int u = 0, v = 0;
+        cin >> u >> v;
+        g[v].push_back(u);
+        g[u].push_back(v);
+    }
+
+    dfs(1, 0);
+
+    if (is_bridge) {
+        cout << 0;
+    } else {
+        for (auto it : ans) {
+            cout << it.first << " " << it.second << '\n';
+        }
+    }
+
+    return 0;
+}
