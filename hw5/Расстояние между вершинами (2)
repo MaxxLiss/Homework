@@ -1,0 +1,75 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+static const long long INF = 2e18;
+const int N = 7e4 + 1;
+
+vector<pair<int, int>> g[N];
+long long dist[N];
+int p[N];
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    freopen("distance.in", "r", stdin);
+    freopen("distance.out", "w", stdout);
+
+    int n = 0, m = 0, s = 0, f = 0;
+    cin >> n >> m >> s >> f;
+
+
+    fill_n(dist, N, INF);
+    memset(p, -1, sizeof p);
+    dist[s] = 0;
+    p[s] = 0;
+
+    for (int i = 0; i < m; ++i) {
+        int from = 0, to = 0, cost = 0;
+        cin >> from >> to >> cost;
+        g[from].emplace_back(to, cost);
+        g[to].emplace_back(from, cost);
+    }
+
+    priority_queue<pair<long long, int>> q;
+    q.emplace(0, s);
+
+    while (!q.empty()) {
+        int from = q.top().second;
+        long long cost_f = -q.top().first;
+        q.pop();
+
+        if (cost_f != dist[from]) {
+            continue;
+        }
+
+        for (auto it : g[from]) {
+            int to = it.first;
+            long long cost = it.second;
+            if (dist[to] > dist[from] + cost) {
+                dist[to] = dist[from] + cost;
+                p[to] = from;
+                q.emplace(-dist[to], to);
+            }
+        }
+    }
+
+    if (dist[f] == INF) {
+        cout << -1;
+    } else {
+        cout << dist[f] << endl;
+        int curr = f;
+        stack<int> ans;
+        while (curr) {
+            ans.push(curr);
+            curr = p[curr];
+        }
+        while (!ans.empty()) {
+            cout << ans.top() << " ";
+            ans.pop();
+        }
+    }
+
+    return 0;
+}
