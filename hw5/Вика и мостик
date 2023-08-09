@@ -2,47 +2,62 @@
 
 using namespace std;
 
-const int N = 2e5 + 1, T = 1e4 + 1;
+const int N = 2e5 + 1;
 const int INF = 1e9;
 
-int t = 0;
-deque<int> c[T][N];
-pair<int, int> mx[T][N];
+deque<int> c[N];
+pair<int, int> mx[N];
 
 void solve() {
     auto ans = INF;
     int n = 0, k = 0;
     cin >> n >> k;
+
+    for (int i = 1; i <= n; ++i) {
+        c[i] = {-1};
+        mx[i] = {-1, -1};
+    }
+
+
     for (int i = 0; i < n; ++i) {
         int color = 0;
         cin >> color;
-        if (!c[t][color].empty()) {
-            auto dif = i - c[t][color].back();
-            if (dif > mx[t][color].first) {
-                mx[t][color].second = mx[t][color].first;
-                mx[t][color].first = dif;
-            } else if (dif > mx[t][color].second) {
-                mx[t][color].second = dif;
-            }
+        auto dif = i - c[color].back();
+        if (dif > mx[color].first) {
+            mx[color].second = mx[color].first;
+            mx[color].first = dif;
+        } else if (dif > mx[color].second) {
+            mx[color].second = dif;
         }
+        c[color].push_back(i);
     }
     for (int i = 1; i <= k; ++i) {
-        int tmp = max(mx[t][i].first / 2 + mx[t][i].first % 2, mx[t][i].second);
-        if (tmp != -1 && tmp < ans) {
+        auto dif = n - c[i].back();
+        if (dif > mx[i].first) {
+            mx[i].second = mx[i].first;
+            mx[i].first = dif;
+        } else if (dif > mx[i].second) {
+            mx[i].second = dif;
+        }
+
+        int tmp = max(mx[i].first / 2 + mx[i].first % 2, mx[i].second);
+        if (tmp > 0 && tmp < ans) {
             ans = tmp;
         }
     }
     cout << ans - 1 << '\n';
+
 }
 
 int main() {
-    cin.tie(nullptr); cout.tie(nullptr);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
     ios_base::sync_with_stdio(false);
 
-    memset(mx, -1, sizeof mx);
+    int t = 0;
     cin >> t;
 
-    while(t--) {
+    while (t--) {
         solve();
     }
 
