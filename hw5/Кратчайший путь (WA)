@@ -2,24 +2,33 @@
 
 using namespace std;
 
-const long long INF = 3 * 1e18;
-const int N = 2 * 1e3, M = 5 * 1e3;
+const int N = 2e4 + 1, M = 5e4;
+const long long INF = 3e18;
 
 struct edge {
-    int from = 0, to = 0, cost = 0;
+    int from = 0, to = 0;
+    long long cost = 0;
 };
 
-long long dist[N];
-int p[N];
+// 0 - не посещена 1 - в обходе / отрицательном цикле 2 - посещена
+int p[N], status[N];
+long long d[N];
 edge e[M];
 
-void find_cycle(int v) {
-    dist[v] = -INF;
-
-    if (dist[p[v]] != -INF) {
-        find_cycle(p[v]);
+int find_cycle(int v) {
+    switch (status[p[v]]) {
+        case 0:
+            status[v] = 1;
+            status[v] = find_cycle(p[v]);
+            break;
+        case 1:
+            status[v] = 1;
+            break;
+        case 2:
+            status[v] = 2;
+            break;
     }
-
+    return status[v];
 }
 
 int main() {
@@ -31,41 +40,40 @@ int main() {
 
     int n = 0, m = 0, s = 0;
     cin >> n >> m >> s;
-    s--;
 
-    fill_n(dist, N, INF);
-    dist[s] = 0;
+    fill_n(d, N, INF);
+    d[s] = 0;
+    p[s] = 0;
+
+    memset(status, 0, sizeof status);
+    status[0] = 2;
 
     for (int i = 0; i < m; ++i) {
-        int from = 0, to = 0, cost = 0;
+        int from = 0, to = 0;
+        long long cost = 0;
         cin >> from >> to >> cost;
-        e[i] = {from - 1, to - 1, cost};
+        e[i] = {from, to, cost};
     }
 
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
-            int from = e[j].from, to = e[j].to, cost = e[j].cost;
-            if (dist[from] != INF && dist[to] > dist[from] + cost) {
-                dist[to] = max(dist[from] + cost, -INF + 1);
-                p[to] = from;
-                if (i == n - 1) {
-                    find_cycle(to);
-                }
+            if (d[e[j].from] != INF && d[e[j].to] > d[e[j].from] + e[j].cost) {
+                d[e[j].to] = max(-INF, d[e[j].from] + e[j].cost);
+                p[e[j].to] = e[j].from;
             }
         }
     }
 
-    for (int i = 0; i < n; ++i) {
-        switch (dist[i]) {
-            case INF:
-                cout << "*\n";
-                break;
-            case -INF:
-                cout << "-\n";
-                break;
-            default:
-                cout << dist[i] << '\n';
-                break;
+    for (int i = 1; i <= n; ++i) {
+        if (!status[i]) {
+            find_cycle(i);
+        }
+        if (d[i] == INF) {
+            cout << "*\n";
+        } else if (status[i] == 1) {
+            cout << "-\n";
+        } else {
+            cout << d[i] << '\n';
         }
     }
 
