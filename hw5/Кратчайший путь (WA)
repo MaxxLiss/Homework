@@ -15,20 +15,12 @@ int p[N], status[N];
 long long d[N];
 edge e[M];
 
-int find_cycle(int v) {
-    switch (status[p[v]]) {
-        case 0:
-            status[v] = 1;
-            status[v] = find_cycle(p[v]);
-            break;
-        case 1:
-            status[v] = 1;
-            break;
-        case 2:
-            status[v] = 2;
-            break;
+void find_cycle(int v) {
+    status[v] = 1;
+    if (!status[p[v]]) {
+        find_cycle(p[v]);
     }
-    return status[v];
+    status[v] = status[p[v]];
 }
 
 int main() {
