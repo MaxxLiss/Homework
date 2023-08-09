@@ -7,7 +7,7 @@ const int N = 2e5 + 1;
 int p[N], used[N];
 int ans = 0, cnt = 0;
 
-void dfs(int v) {
+void count_child(int v) {
     if (used[v]) {
         return;
     }

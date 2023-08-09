@@ -8,7 +8,7 @@ int used[N], p[N];
 vector<int> g[N];
 int start_cycle = -1;
 
-bool dfs(int v) {
+bool count_child(int v) {
     for (int to : g[v]) {
         if (!used[to]) {
             p[to] = v;
