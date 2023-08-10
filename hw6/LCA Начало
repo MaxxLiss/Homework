@@ -1,0 +1,73 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 2e3, L = 13;
+
+int d[N];
+int up[N][L];
+
+void update(int v, int p) {
+    up[v][0] = p;
+    d[v] = d[p] + 1;
+    for (int i = 1; i < L; ++i) {
+        up[v][i] = up[up[v][i - 1]][i - 1];
+    }
+}
+
+int lca(int a, int b) {
+    if (d[b] < d[a]) {
+        swap(a, b);
+    }
+    int diff = d[b] - d[a];
+    for (int i = 0; i < L; ++i) {
+        if (diff & (1 << i)) {
+            b = up[b][i];
+        }
+    }
+    if (a == b) {
+        return a;
+    }
+    for (int i = L - 1; i >= 0; --i) {
+        auto tmp_a = up[a][i], tmp_b = up[b][i];
+        if (tmp_a != tmp_b) {
+            a = tmp_a;
+            b = tmp_b;
+        }
+    }
+    return up[a][0];
+}
+
+void solve() {
+    string in;
+    cin >> in;
+
+    if (in == "ADD") {
+        int a = 0, b = 0;
+        cin >> a >> b;
+        update(b, a);
+    } else {
+        int a = 0, b = 0;
+        cin >> a >> b;
+        cout << lca(a, b) << '\n';
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    freopen("lca.in", "r", stdin);
+    freopen("lca.out", "w", stdout);
+
+    fill_n(up[1], L, 1);
+    d[1] = 0;
+
+    int k = 0;
+    cin >> k;
+    while (k--) {
+        solve();
+    }
+
+    return 0;
+}
