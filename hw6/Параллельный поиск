@@ -1,0 +1,52 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+void solve() {
+    int n = 0, s[2];
+    deque<int> ans[2];
+
+    cin >> n >> s[0] >> s[1];
+    int wait[] = {s[0], s[1]};
+
+    set<pair<int,int>> work;
+    for (int i = 1; i <= n; ++i) {
+        int color = 0;
+        cin >> color;
+        work.emplace(-color, i);
+    }
+
+    for (auto color : work) {
+        if (wait[0] < wait[1]) {
+            ans[0].push_back(color.second);
+            wait[1] -= wait[0];
+            wait[0] = s[0];
+        } else {
+            ans[1].push_back(color.second);
+            wait[0] -= wait[1];
+            wait[1] = s[1];
+        }
+    }
+    cout << ans[0].size() << " ";
+    for (auto color : ans[0]) {
+        cout << color << " ";
+    }
+    cout << '\n' << ans[1].size() << " ";
+    for (auto color : ans[1]) {
+        cout << color << " ";
+    }
+    cout << '\n';
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int t = 0;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
