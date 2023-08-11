@@ -1,0 +1,125 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 1e5 + 1, L = 18;
+
+int n = 0;
+
+int d[N], cnt[N];
+int up[N][L];
+deque<int> g[N];
+
+void dfs(int v, int p) {
+    cnt[v] = 1;
+
+    d[v] = d[p] + 1;
+    up[v][0] = p;
+
+    for (int i = 1; i < L; ++i) {
+        up[v][i] = up[up[v][i - 1]][i - 1];
+    }
+
+    for (auto to : g[v]) if (to != p) {
+            dfs(to, v);
+    }
+    cnt[p] += cnt[v];
+
+}
+
+int lca(int v, int u) {
+    if (v == u) {
+        return n;
+    }
+    if (d[v] > d[u]) {
+        swap(v, u);
+    }
+    int s_v = v, s_u = u;
+    int dif = d[u] - d[v];
+    for (int i = 0; i < L; ++i) {
+        if (dif & (1 << i)) {
+            u = up[u][i];
+        }
+    }
+    if (v == u) {
+        if (dif % 2 == 1) {
+            return 0;
+        }
+        int tmp_u = s_u, pos = dif / 2 + d[v];
+        for (int i = L - 1; i >= 0; --i) {
+            if (d[up[tmp_u][i]] > pos) {
+                tmp_u = up[tmp_u][i];
+            }
+        }
+        return cnt[up[tmp_u][0]] - cnt[tmp_u];
+    }
+    for (int i = L - 1; i >= 0; --i) {
+        if (up[v][i] != up[u][i]) {
+            v = up[v][i];
+            u = up[u][i];
+        }
+    }
+    auto lc = up[u][0];
+    auto dist = d[s_u] + d[s_v] - 2 * d[lc];
+    if (dist % 2 == 1) {
+        return 0;
+    }
+    if (d[s_u] == d[s_v]) {
+        return n - cnt[u] - cnt[v];
+    }
+    int tmp_u = s_u, pos = d[s_u] - dist / 2;
+    for (int i = L - 1; i >= 0; --i) {
+        if (d[up[tmp_u][i]] > pos) {
+            tmp_u = up[tmp_u][i];
+        }
+    }
+    return cnt[up[tmp_u][0]] - cnt[tmp_u];
+}
+
+void solve() {
+    int u = 0, v = 0;
+    cin >> u >> v;
+    cout << lca(v, u) << '\n';
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> n;
+
+    for (auto & i : up) {
+        i[0] = -1;
+    }
+
+    for (int i = 0; i < n - 1; ++i) {
+        int from = 0, to = 0;
+        cin >> from >> to;
+        up[to][0] = to;
+        g[from].push_back(to);
+        g[to].push_back(from);
+    }
+
+    int root = -1;
+    for (int i = 1; i < N; ++i) {
+        if (up[i][0] == -1) {
+            root = i;
+            break;
+        }
+    }
+    fill_n(up[root], N, root);
+    d[root] = 0;
+    cnt[root] = 1;
+
+    for (int v : g[root]) {
+        dfs(v, root);
+    }
+
+    int m = 0;
+    cin >> m;
+    while (m--) {
+        solve();
+    }
+
+    return 0;
+}
