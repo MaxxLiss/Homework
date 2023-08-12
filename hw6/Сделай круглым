@@ -1,0 +1,51 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int d[] = {9, 8, 7, 6, 5, 4, 3, 2};
+
+void solve() {
+    long long n = 0, m = 0, add = 1;
+    cin >> n >> m;
+    int cnt[] = {0, 0};
+
+    auto tmp = n;
+    while (!(tmp & 1)) {
+        cnt[0]++;
+        tmp >>= 1;
+    }
+    while (!(tmp % 5)) {
+        cnt[1]++;
+        tmp /= 5;
+    }
+    while (cnt[0] < cnt[1] && add * 2 <= m) {
+        add *= 2;
+        cnt[0]++;
+    }
+    while (cnt[1] < cnt[0] && add * 5 <= m) {
+        add *= 5;
+        cnt[1]++;
+    }
+    while (add * 10 <= m) {
+        add *= 10;
+    }
+    for (int i : d) {
+        while (add * i <= m) {
+            add *= i;
+        }
+    }
+    cout << n * add << '\n';
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int t = 0;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
