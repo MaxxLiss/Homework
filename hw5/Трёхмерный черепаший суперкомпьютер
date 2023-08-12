@@ -1,0 +1,83 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 100;
+int work[N][N][N];
+int used[N][N][N];
+
+int dn[] = {1, 0, 0};
+int dm[] = {0, 1, 0};
+int dk[] = {0, 0, 1};
+
+int n = 0, m = 0, k = 0;
+
+void dfs(int i, int j, int l, int d) {
+    used[i][j][l] = 1;
+    if (d == 2) {
+        return;
+    }
+    for (int p = 0; p < 3; ++p) {
+        int ni = i + dn[p], nj = j + dm[p], nl = l + dk[p];
+        if (ni < n && nj < m && nl < k && work[ni][nj][nl]) {
+            dfs(ni, nj, nl, d + 1);
+        }
+    }
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    cin >> n >> m >> k;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            string in;
+            cin >> in;
+            for (int l = 0; l < k; ++l) {
+                work[i][j][l] = (in[l] == '1');
+            }
+        }
+    }
+
+    int ans = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            for (int l = 0; l < k; ++l) if (work[i][j][l]) {
+                int get = 0, from = 0, to = 0;
+                for (int p = 0; p < 3; ++p) {
+                    int ni = i + dn[p], nj = j + dm[p], nl = l + dk[p];
+                    if (ni < n && nj < m && nl < k && work[ni][nj][nl]) {
+                        used[ni][nj][nl] = 0;
+                        from++;
+                    }
+                }
+                work[i][j][l] = 0;
+                for (int p = 0; p < 3; ++p) {
+                    int ni = i - dn[p], nj = j - dm[p], nl = l - dk[p];
+                    if (ni >= 0 && nj >= 0 && nl >= 0 && work[ni][nj][nl]) {
+                        to++;
+                        dfs(ni, nj, nl, 0);
+                        int loc_cnt = 0;
+                        for (int p = 0; p < 3; ++p) {
+                            int ni = i + dn[p], nj = j + dm[p], nl = l + dk[p];
+                            if (ni < n && nj < m && nl < k && work[ni][nj][nl] && used[ni][nj][nl]) {
+                                loc_cnt++;
+                                used[ni][nj][nl] = 0;
+                            }
+                        }
+                        if (loc_cnt == from) {
+                            get++;
+                        }
+                    }
+                }
+                work[i][j][l] = 1;
+                ans += (get == to ? 0 : 1);
+            }
+        }
+    }
+
+    cout << ans;
+
+    return 0;
+}
