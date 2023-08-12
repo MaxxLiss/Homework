@@ -1,0 +1,52 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+int m = 0;
+
+deque<int> work;
+vector<int> v;
+
+bool f(int last, int dif, int len) {
+    if (m == len) {
+        return true;
+    }
+    for (auto w : v) if (w != last) {
+        if (w - dif > 0) {
+            work.push_back(w);
+            auto ret = f(w, w - dif, len + 1);
+            if (ret) {
+                return true;
+            }
+            work.pop_back();
+        }
+    }
+    return false;
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    string in;
+    cin >> in;
+    for (int i = 0; i < in.size(); ++i) {
+        if (in[i] == '1') {
+            v.push_back(i + 1);
+        }
+    }
+
+    cin >> m;
+    auto ans = f(0, 0, 0);
+
+    if (!ans) {
+        cout << "NO";
+    } else {
+        cout << "YES\n";
+        for (auto it : work) {
+            cout << it << " ";
+        }
+    }
+
+    return 0;
+}
