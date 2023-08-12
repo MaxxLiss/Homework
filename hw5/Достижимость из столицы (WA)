@@ -16,7 +16,6 @@ void count_child(int v) {
         }
         connected[v] += connected[to];
     }
-    s.insert({-connected[v], v});
 }
 
 int used[N];
@@ -46,6 +45,7 @@ int main() {
     for (int i = 1; i <= n; ++i) {
         if (!connected[i]) {
             count_child(i);
+            s.insert({-connected[i], i});
         }
     }
 
