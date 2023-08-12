@@ -16,16 +16,14 @@ void count_child(int v) {
         }
         connected[v] += connected[to];
     }
-    s.insert({connected[v], v});
+    s.insert({-connected[v], v});
 }
 
 int used[N];
 void dfs(int v) {
     used[v] = 1;
-    for (auto to : g[v]) {
-        if (!used[to]) {
-            dfs(to);
-        }
+    for (auto to : g[v]) if (!used[to]) {
+        dfs(to);
     }
 }
 
