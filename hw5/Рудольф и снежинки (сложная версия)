@@ -2,51 +2,50 @@
 
 using namespace std;
 
-const uint64_t INF = 4e18;
+const long long INF = 4e18;
 
-uint64_t mul(uint64_t a, uint64_t b) {
+long long mul(long long a, long long b) {
     if (INF / a < b) {
         return INF;
     }
     return a * b;
 }
 
-uint64_t bpow(uint64_t a, uint64_t p) {
-    uint64_t res = 1;
-    while (p && res != INF) {
-        if (p & 1) {
-            res = mul(res, a);
-        }
-        a = mul(a, a);
-        p >>= 1;
+long long sum(long long a, long long b) {
+    if (INF - a < b) {
+        return INF;
     }
-    return res;
+    return a + b;
 }
 
 void solve() {
-    double n = 0;
+    long long n = 0;
     cin >> n;
 
     bool ans = false;
-    double tmp = -1;
     for (int deg = 3; deg <= 65 && !ans; ++deg) {
-        uint64_t l = 1, r = 1e9;
+        long long l = 2, r = 1e9;
         while (l + 1 != r) {
             auto m = (l + r) / 2;
-            auto q = bpow(m, deg);
-            if (q == INF) {
-                r = m;
-                continue;
+            long long sm = 0;
+            long long tmp = 1;
+            for (int i = 0; i < deg && sm < INF; ++i) {
+                sm = sum(sm, tmp);
+                tmp = mul(tmp, m);
             }
-            auto sum = (double) (q - 1) / (double) (m - 1);
-            if (sum > n) {
+            if (sm > n) {
                 r = m;
             } else {
-                tmp = sum;
                 l = m;
             }
         }
-        ans = (tmp == n);
+        long long sm = 0;
+        long long tmp = 1;
+        for (int i = 0; i < deg; ++i) {
+            sm = sum(sm, tmp);
+            tmp = mul(tmp, l);
+        }
+        ans = (sm == n);
     }
     cout << (ans ? "YES\n" : "NO\n");
 }
