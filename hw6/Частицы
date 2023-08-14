@@ -1,0 +1,48 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+using ll = long long;
+
+const int INF = 2e9;
+
+void solve() {
+
+    int n = 0;
+    cin >> n;
+
+    int cnt_pos[] = {0, 0};
+    ll sm[] = {0, 0};
+    int mx_neg[] = {-INF, -INF};
+
+    for (int i = 0; i < n; ++i) {
+        int it = 0;
+        cin >> it;
+
+        if (it < 0) {
+            mx_neg[i % 2] = max(mx_neg[i % 2], it);
+        } else {
+            cnt_pos[i % 2]++;
+            sm[i % 2] += it;
+        }
+    }
+
+    if (!cnt_pos[0] && !cnt_pos[1]) {
+        cout << max(mx_neg[0], mx_neg[1]) << '\n';
+    } else {
+        cout << max(sm[0], sm[1]) << '\n';
+    }
+
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int t = 0;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+    return 0;
+}
