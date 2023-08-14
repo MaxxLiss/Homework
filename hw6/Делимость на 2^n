@@ -1,0 +1,52 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+using ll = long long;
+
+void solve() {
+    int n = 0;
+    cin >> n;
+
+    vector <int> v(n);
+    for (int i = 1; i <= n; ++i) {
+        int tmp = 0, pos = i;
+        while (!(pos & 1)) {
+            tmp++;
+            pos /= 2;
+        }
+        v[i - 1] = tmp;
+    }
+    sort(v.begin(), v.end());
+
+    ll cnt = 0;
+    for (int i = 0; i < n; ++i) {
+        int it = 0;
+        cin >> it;
+
+        while (!(it & 1)) {
+            cnt++;
+            it /= 2;
+        }
+    }
+
+    int ans = 0;
+    for (int i = n - 1; i >= 0 && cnt < n; --i) {
+        ans++;
+        cnt += v[i];
+    }
+    cout << (cnt < n ? -1 : ans) << '\n';
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int t = 0;
+    cin >> t;
+    while(t--) {
+        solve();
+    }
+
+
+    return 0;
+}
