@@ -13,8 +13,8 @@ void count_child(int v) {
     for (auto to : g[v]) {
         if (!connected[to]) {
             count_child(to);
+            connected[v] += connected[to];
         }
-        connected[v] += connected[to];
     }
 }
 
@@ -22,15 +22,14 @@ int used[N];
 void dfs(int v) {
     used[v] = 1;
     for (auto to : g[v]) if (!used[to]) {
-        dfs(to);
-    }
+            dfs(to);
+        }
 }
 
 int main() {
     cin.tie(nullptr); cout.tie(nullptr);
     ios_base::sync_with_stdio(false);
 
-    memset(connected, 0, sizeof connected);
     memset(used, 0, sizeof used);
 
     int n = 0, m = 0, start = 0;
@@ -43,19 +42,18 @@ int main() {
     }
 
     for (int i = 1; i <= n; ++i) {
-        if (!connected[i]) {
-            count_child(i);
-            s.insert({-connected[i], i});
-        }
+        memset(connected, 0, sizeof connected);
+        count_child(i);
+        s.insert({-connected[i], i});
     }
 
     int ans = 0;
     dfs(start);
 
     for (auto pos : s) if (!used[pos.second]) {
-        dfs(pos.second);
-        ans++;
-    }
+            dfs(pos.second);
+            ans++;
+        }
 
     cout << ans;
 
