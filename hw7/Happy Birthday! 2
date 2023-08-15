@@ -1,0 +1,63 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int M = 200;
+
+bitset<M> sum, updated;
+vector<vector<int>> last(M);
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    pair<vector<int>, vector<int>> ans;
+    int n = 0;
+    cin >> n;
+
+    for (int i = 0; i < n && ans.first.empty(); ++i) {
+        int it = 0;
+        cin >> it;
+        it %= M;
+
+        if (sum[it]) {
+            ans = {last[it], {i + 1}};
+            break;
+        } else {
+            last[it] = {i + 1};
+            sum[it] = true;
+        }
+        updated.reset();
+        for (int j = M - 1; j >= 0; --j) if (sum[j] && j != it && !updated[j]) {
+            auto nsum = (j + it) % 200;
+
+            auto tmp = last[j];
+            tmp.push_back(i + 1);
+            if (sum[nsum]) {
+                ans = {last[nsum], tmp};
+                break;
+            } else {
+                last[nsum] = tmp;
+                sum[nsum] = true;
+                updated[nsum] = true;
+            }
+        }
+    }
+
+    if (ans.first.empty()) {
+        cout << "No";
+    } else {
+        cout << "Yes\n";
+        cout << ans.first.size() << " ";
+        for (int i : ans.first) {
+            cout << i << " ";
+        }
+        cout << '\n';
+        cout << ans.second.size() << " ";
+        for (int i : ans.second) {
+            cout << i << " ";
+        }
+    }
+
+    return 0;
+}
