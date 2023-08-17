@@ -1,0 +1,100 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 2e5 + 1, L = 19;
+
+set<pair<int, int>> ds;
+deque<int> g[N];
+int up[N][L], cnt[N][L];
+int d[N];
+
+void dfs(int v, int p) {
+    d[v] = d[p] + 1;
+    up[v][0] = p;
+    ds.insert({-d[v], v});
+
+    for (int i = 1; i < L; ++i) {
+        up[v][i] = up[up[v][i - 1]][i - 1];
+    }
+
+    for (auto to : g[v]) if (!d[to]) {
+        dfs(to, v);
+    }
+}
+
+void lca(int v, int u) {
+    if (d[v] > d[u]) {
+        swap(v, u);
+    }
+    int dif = d[u] - d[v];
+    for (int i = 0; i < L; ++i) {
+        if (dif & (1 << i)) {
+            cnt[u][i]++;
+            u = up[u][i];
+        }
+    }
+
+    if (v == u) {
+        return;
+    }
+
+    for (int i = L - 1; i >= 0; --i) {
+        if (up[v][i] != up[u][i]) {
+            cnt[v][i]++;
+            cnt[u][i]++;
+            v = up[v][i];
+            u = up[u][i];
+        }
+    }
+
+    cnt[v][0]++;
+    cnt[u][0]++;
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    memset(cnt, 0, sizeof N);
+    d[1] = 0;
+
+    int n = 0;
+    cin >> n;
+
+    deque<pair<int, int>> roads;
+    for (int i = 1; i < n; ++i) {
+        int u = 0, v = 0;
+        cin >> u >> v;
+        g[u].push_back(v);
+        g[v].push_back(u);
+        roads.emplace_back(u, v);
+    }
+
+    dfs(1, 1);
+
+    int k = 0;
+    cin >> k;
+
+    while (k--) {
+        int u = 0, v = 0;
+        cin >> u >> v;
+        lca(v, u);
+    }
+
+    for (const auto & it : ds) {
+        int v = it.second;
+        for (int i = L - 1; i > 0; --i) if (cnt[v][i]) {
+            cnt[v][i - 1] += cnt[v][i];
+            cnt[up[v][i - 1]][i - 1] += cnt[v][i];
+            cnt[v][i] = 0;
+        }
+    }
+
+    for (auto road : roads) {
+        int v = d[road.first] > d[road.second] ? road.first : road.second;
+        cout << cnt[v][0] << " ";
+    }
+
+    return 0;
+}
