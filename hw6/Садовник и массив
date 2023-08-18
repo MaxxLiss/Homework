@@ -1,0 +1,56 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+void solve() {
+    int n = 0;
+    cin >> n;
+
+    unordered_map<int, int> m;
+    vector<unordered_set<int>> loc(n);
+
+    bool ans = false;
+    for (int i = 0; i < n; ++i) {
+        int k = 0;
+        cin >> k;
+
+        for (int j = 0; j < k; ++j) {
+            int it = 0;
+            cin >> it;
+
+            if (loc[i].find(it) == loc[i].end()) {
+                m[it]++;
+            }
+            loc[i].insert(it);
+        }
+    }
+
+    for (int i = 0; i < n; ++i) {
+        int cnt = 0;
+        for (auto it : loc[i]) {
+            if (m[it] < 2) {
+                cnt++;
+            }
+        }
+        if (!cnt) {
+            ans = true;
+            break;
+        }
+    }
+
+    cout << (ans ? "YES\n" : "NO\n");
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int t = 0;
+    cin >> t;
+
+    while(t--) {
+        solve();
+    }
+
+    return 0;
+}
