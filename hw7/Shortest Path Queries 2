@@ -1,0 +1,41 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int INF = 1e9;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int n = 0, m = 0;
+    cin >> n >> m;
+
+    vector<vector<int>> g(n + 1, vector<int> (n + 1, INF));
+
+    for (int i = 1; i <= n; ++i) {
+        g[i][i] = 0;
+    }
+
+    for (int i = 0; i < m; ++i) {
+        int from = 0, to = 0, cost = 0;
+        cin >> from >> to >> cost;
+        g[from][to] = cost;
+    }
+    long long ans = 0;
+
+    for (int k = 1; k <= n; ++k) {
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                g[i][j] = min(g[i][k] + g[k][j], g[i][j]);
+                if (g[i][j] != INF) {
+                    ans += g[i][j];
+                }
+            }
+        }
+    }
+
+    cout << ans;
+
+    return 0;
+}
