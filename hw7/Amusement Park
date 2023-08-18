@@ -1,0 +1,39 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int INF = 1e9;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int n = 0, k = 0;
+    cin >> n >> k;
+
+    vector<long long> v(n, 0);
+    for (auto &it : v) {
+        cin >> it;
+    }
+    sort(v.begin(), v.end());
+
+    int pos = n - 1;
+    long long ans = 0, cnt = 1, left = k;
+
+    while (pos && left && left >= cnt * (v[pos] - v[pos - 1])) {
+        ans += cnt * (v[pos] + v[pos - 1] + 1) * (v[pos] - v[pos - 1]) / 2;
+        left -= cnt * (v[pos] - v[pos - 1]);
+        cnt++;
+        pos--;
+    }
+    int dif = 0;
+    while (left && (v[pos] - dif)) {
+        ans += min(cnt, left) * (v[pos] - dif);
+        left -= min(cnt, left);
+        dif++;
+    }
+
+    cout << ans;
+
+    return 0;
+}
