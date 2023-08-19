@@ -1,0 +1,68 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int N = 1e7 + 1;
+
+vector<int> simples;
+vector<int> used(N, 0);
+
+void find_simples() {
+    int i;
+    for (i = 2; i * i <= N; ++i) if (!used[i]) {
+        simples.push_back(i);
+        for (int j = i * i; j <= N; j += i) {
+            used[j] = 1;
+        }
+    }
+    for (i; i <= N; ++i) if (!used[i]) {
+        simples.push_back(i);
+    }
+}
+
+unordered_map<int, long long> cnt;
+
+void solve() {
+    int n = 0;
+    cin >> n;
+    cnt.clear();
+
+    for (int i = 0; i < n; ++i) {
+        int it = 0;
+        cin >> it;
+
+        while (it != 1) {
+            for (auto del : simples) {
+                while (!(it % del)) {
+                    cnt[del]++;
+                    it /= del;
+                }
+            }
+        }
+    }
+
+    long long x = 0, y = 0;
+    for (auto it : cnt) {
+        x += it.second / 2;
+        y += it.second % 2;
+    }
+    auto ans = x + y / 3;
+
+    cout << ans << '\n';
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    find_simples();
+
+    int t = 0;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+
+
+    return 0;
+}
