@@ -1,0 +1,118 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+using ll = long long;
+
+const int N = 1e5, INF = 2e9;
+const int SIZE = 4 * N, L = 20;
+
+vector<int> g[N];
+int d[N], f[N];
+
+vector<int> arr;
+int st[L][SIZE], lg[SIZE];
+
+void dfs(int v) {
+    if (f[v] == -1) {
+        f[v] = (int) arr.size();
+    }
+    arr.push_back(v);
+    for (int to : g[v]) if (!d[to]) {
+        d[to] = d[v] + 1;
+        dfs(to);
+        arr.push_back(v);
+    }
+}
+
+void build_log() {
+    lg[1] = 0;
+    for (int i = 2; i < SIZE; ++i) {
+        lg[i] = lg[i / 2] + 1;
+    }
+}
+
+void build_st() {
+    build_log();
+
+    for (int i = 0; i < SIZE; ++i) {
+        if (i < arr.size()) {
+            st[0][i] = arr[i];
+        } else {
+            st[0][i] = INF;
+        }
+    }
+
+    for (int i = 1; i < L; ++i) {
+        for (int j = 0; j + (1 << i) < SIZE; ++j) {
+            if (st[i - 1][j + (1 << (i - 1))] == INF) {
+                st[i][j] = st[i - 1][j];
+            } else {
+                st[i][j] = (d[st[i - 1][j]] < d[st[i - 1][j + (1 << (i - 1))]]
+                            ? st[i - 1][j] : st[i - 1][j + (1 << (i - 1))]);
+            }
+        }
+    }
+}
+
+int get_mn(int l, int r) {
+    int tmp = lg[r - l + 1];
+    return st[tmp][r - (1 << tmp) + 1] == INF
+        || d[st[tmp][l]] < d[st[tmp][r - (1 << tmp) + 1]] ? st[tmp][l] : st[tmp][r - (1 << tmp) + 1];
+}
+
+int lca(int v, int u) {
+    if (f[v] > f[u]) {
+        swap(v, u);
+    }
+    int l = f[v], r = f[u];
+    return get_mn(l, r);
+}
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    freopen("lca_rmq.in", "r", stdin);
+    freopen("lca_rmq.out", "w", stdout);
+
+    memset(d, 0, sizeof d);
+    memset(f, -1, sizeof f);
+    d[0] = 1;
+
+    int n = 0, m = 0;
+    cin >> n >> m;
+
+    for (int i = 1; i < n; ++i) {
+        int p = 0;
+        cin >> p;
+
+        g[i].push_back(p);
+        g[p].push_back(i);
+    }
+
+    dfs(0);
+    build_st();
+
+    pair<ll, ll> a;
+    cin >> a.first >> a.second;
+
+    ll x = 0, y = 0, z = 0;
+    cin >> x >> y >> z;
+
+    ll v = lca(a.first, a.second);
+    ll ans = v;
+    for (int i = 1; i < m; ++i) {
+        auto tmp = a.second;
+        a.second = (x * a.first + y * a.second + z) % n, a.first = tmp;
+        tmp = a.second;
+        a.second = (x * a.first + y * a.second + z) % n, a.first = tmp;
+
+        v = lca((a.first + v) % n, a.second);
+        ans += v;
+    }
+
+    cout << ans;
+
+    return 0;
+}
