@@ -7,27 +7,27 @@ const int N = 2e5 + 1;
 
 int n = 0;
 
-ll sum_root[N], sum_child[N];
-int cnt[N];
+ll sum[N], sum_child[N];
+int cnt_child[N];
 vector<int> g[N];
 
 void build(int v, int p) {
-    cnt[v] = 1;
+    cnt_child[v] = 1;
     sum_child[v] = 0;
     for (int to : g[v]) if (to != p) {
-        build(to, v);
-        cnt[v] += cnt[to];
-        sum_child[v] += sum_child[to] + cnt[to];
-    }
+            build(to, v);
+            cnt_child[v] += cnt_child[to];
+            sum_child[v] += sum_child[to] + cnt_child[to];
+        }
 }
 
 void work(int v, int p) {
     if (v != 1) {
-        sum_root[v] = sum_root[p] + n - 2 * cnt[v];
+        sum[v] = sum[p] + n - 2 * cnt_child[v];
     }
     for (auto to : g[v]) if (to != p) {
-        work(to, v);
-    }
+            work(to, v);
+        }
 }
 
 int main() {
@@ -44,12 +44,12 @@ int main() {
     }
 
     build(1, 0);
-    sum_root[1] = sum_child[1];
+    sum[1] = sum_child[1];
 
     work(1, 0);
 
     for (int i = 1; i <= n; ++i) {
-        cout << sum_root[i] << '\n';
+        cout << sum[i] << '\n';
     }
 
     return 0;
