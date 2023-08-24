@@ -1,0 +1,77 @@
+#include "bits/stdc++.h"
+
+using namespace std;
+
+const int di[] = {1, -1, 0, 0};
+const int dj[] = {0, 0, -1, 1};
+
+const int N = 4;
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+
+    int field[N][N];
+    pair<int, int> st;
+
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            cin >> field[i][j];
+            if (field[i][j]) {
+                st = {i, j};
+            }
+        }
+    }
+
+    int ans = 0;
+    for (int i = 1; i < (1 << N * N); ++i) {
+        bool work = true;
+        int cnt = 0;
+        for (int j = 0; j < N && work; ++j) {
+            for (int k = 0; k < N && work; ++k) {
+                if (i & (1 << (N * j + k))) {
+                    cnt++;
+                } else if (field[j][k]) {
+                    work = false;
+                }
+            }
+        }
+        if (!work) {
+            continue;
+        }
+
+        queue<pair<int, int>> q;
+        q.push(st);
+
+        int used[N * N];
+        memset(used, 0, sizeof used);
+        used[N * st.first + st.second] = 1;
+
+        while (!q.empty()) {
+            cnt--;
+            auto pos = q.front();
+            q.pop();
+
+            for (int j = 0; j < 4; ++j) {
+                auto ni = pos.first + di[j], nj = pos.second + dj[j];
+                if (0 > min(ni, nj) || max(ni, nj) >= N) {
+                    continue;
+                }
+
+                int tmp = N * ni + nj;
+                if (i & (1 << tmp) && !used[tmp]) {
+                    used[tmp] = 1;
+                    q.emplace(ni, nj);
+                }
+            }
+        }
+
+        if (!cnt) {
+            ans++;
+        }
+    }
+
+    cout << ans;
+
+    return 0;
+}
